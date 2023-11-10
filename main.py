@@ -50,23 +50,28 @@ try:
                 # Download PDFs and save to fact_sheets folder
                 fact_sheet_url = row['fact_sheet']
 
-                print(f"fact_sheet_url = {fact_sheet_url}")
-                pdf_response = requests.get(fact_sheet_url)
-                print(f"pdf_response = {pdf_response}")
-                pdf_content = pdf_response.content
+                try:
+                    pdf_response = requests.get(fact_sheet_url)
+                    pdf_content = pdf_response.content
 
-                # Remove special characters from the generated file name
-                pdf_name = re.sub(r'[^a-zA-Z0-9\s]', '',
-                                  row['company_name'] + '_' + row['plan_name'])
+                    # Remove special characters from the generated file name
+                    pdf_name = re.sub(
+                        r'[^a-zA-Z0-9\s]', '',
+                        row['company_name'] + '_' + row['plan_name'])
 
-                fact_sheets_folder = 'fact_sheets'
-                os.makedirs(fact_sheets_folder, exist_ok=True)
+                    fact_sheets_folder = 'fact_sheets'
+                    os.makedirs(fact_sheets_folder, exist_ok=True)
 
-                pdf_path = os.path.join(fact_sheets_folder, pdf_name + '.pdf')
-                with open(pdf_path, 'wb') as pdf_file:
-                    pdf_file.write(pdf_content)
+                    pdf_path = os.path.join(fact_sheets_folder,
+                                            pdf_name + '.pdf')
+                    with open(pdf_path, 'wb') as pdf_file:
+                        pdf_file.write(pdf_content)
 
-                print(f"Downloaded and saved PDF: {pdf_path}")
+                    print(f"Downloaded and saved PDF: {pdf_path}")
+
+                except requests.RequestException as pdf_error:
+                    print(f"Error downloading or saving PDF: {pdf_error}")
+                    continue  # Continue to the next plan in case of an error
 
         print(f"Data and PDFs saved successfully.")
     else:

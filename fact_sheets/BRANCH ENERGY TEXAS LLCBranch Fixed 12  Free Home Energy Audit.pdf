@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1"
+    />
+    <title>Branch Energy EFL Template / Plantilla EFL</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://branch-public-images.s3.amazonaws.com/favicon.ico"
+    />
+    <style>
+      @font-face {
+        font-family: "Lausanne 350";
+        src: url("https://s3.amazonaws.com/appforest_uf/f1625673292903x593155210749112300/TWKLausanne-350.ttf");
+      }
+
+      @font-face {
+        font-family: "Lausanne 700";
+        src: url("https://s3.amazonaws.com/appforest_uf/f1625674615709x820163020938874900/TWKLausanne-700.ttf");
+      }
+
+      body {
+        font-family: "Lausanne 350", sans-serif;
+      }
+      b {
+        font-family: "Lausanne 700";
+      }
+      table {
+        zoom: 90%;
+      }
+      table,
+      th {
+        border: 1px solid black;
+        border-collapse: collapse;
+        border-width: 2px;
+        margin: 0 auto;
+        max-width: 1500px;
+        padding: 15px;
+        font-family: "Lausanne 350", sans-serif;
+      }
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        border-width: 2px;
+        width: 2000px;
+        word-break: break-word;
+      }
+      .disclaimer {
+        text-align: center;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        font-size: 18px;
+        max-width: 1320px;
+        margin: 15px auto;
+      }
+      .header h2 {
+        position: relative;
+        max-width: 1300px;
+        width: 100%;
+        text-align: center;
+        line-height: 1.4em;
+      }
+      .product {
+        text-align: center;
+      }
+      .header img {
+        float: left;
+        width: 160px;
+        height: 115px;
+        margin: 0 auto;
+      }
+      tr:nth-child(1) {
+        background-color: #31a03a;
+        text-align: center;
+      }
+      .section-headers {
+        text-align: center;
+        color: #31a03a;
+        /*font-weight: bold;*/
+        font-family: "Lausanne 700", sans-serif;
+        /*width: 50px;*/
+        word-break: initial;
+      }
+      /*hr {
+        border-color: rgb(96, 210, 105);
+        max-width: 1345px;
+      }*/
+      .disclaimer {
+        background-color: #eaf4ff;
+        border: 1px solid #0075ff;
+        padding: 15px;
+        border-radius: 5px;
+      }
+
+      p {
+        font-family: "Lausanne 350", sans-serif;
+        line-height: 1.5;
+        font-size: 16px;
+      }
+      h2 {
+        margin-left: auto;
+        margin-right: auto;
+        width: 8em;
+        /*font-family: "Lausanne 700", sans-serif;*/
+      }
+      h3 {
+        font-size: 20px;
+      }
+      td {
+        padding-left: 2%;
+        padding-right: 2%;
+        padding-top: 1%;
+        padding-bottom: 1%;
+      }
+      .question {
+        font-family: "Lausanne 700", sans-serif;
+      }
+      @media (min-width: 1000px) {
+        .section-headers {
+          width: 50px;
+        }
+      }
+      @media only screen and (max-width: 767px) {
+        table,
+        p {
+          font-size: 14px;
+        }
+        .header h2 {
+          font-size: 20px;
+          margin-top: 0;
+        }
+        h3 {
+          font-size: 18px;
+        }
+        .header img {
+          float: initial;
+        }
+      }
+    </style>
+  </head>
+  <div class="disclaimer">
+    <p>
+      Spanish documents follow below English / Los documentos en Español siguen
+      a continuación en Inglés
+    </p>
+  </div>
+  <body>
+    <table class="has-border efl">
+      <colgroup>
+        <col span="1" style="width: 700px" />
+      </colgroup>
+      <tbody>
+        <th colspan="8">
+          <div class="header">
+            <!-- src="https://branch-public-images.s3.amazonaws.com/EFL_Header2.PNG" -->
+            <div id="logo">
+              <img
+                src="https://s3.amazonaws.com/appforest_uf/f1627500003483x958364584296489300/logo-white.svg"
+              />
+            </div>
+            <div style="color: white;" class="product">
+              <h2>
+                <b>Electricity Facts Label (EFL)</b><br />
+                <b><span id="lblBrandName">Branch Energy®</span></b
+                ><br />
+              </h2>
+              <h3>
+                <span id="lblproductName">Branch Fixed</span>
+                <span id="lblProductTerm">12 </span>
+                <span id="lblproductStructure">– Fixed Energy Full Requirements</span>
+                <span id="lblTDSPName">Oncor</span><br />
+                <span id="lblTodaysDate">09-26-2023</span>
+              </h3>
+            </div>
+          </div>
+        </th>
+        <div class="banner-rates">
+          <tr>
+            <td class="section-headers" rowspan="3">Electricity Price</td>
+            <th><b>Average Monthly Use</b></th>
+            <th>500 kWh</th>
+            <th>1,000 kWh</th>
+            <th>2,000 kWh</th>
+          </tr>
+        </div>
+
+        <tr>
+          <td style="text-align: center;"><b>Average Price per kWh</b></td>
+          <td><span id="lbl500KWH">15.6¢</span></td>
+          <td><span id="lbl1000KWH">15.2¢</span></td>
+          <td><span id="lbl2000KWH">15.0¢</span></td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            <span id="lblEFLenergyrates">
+              <p>
+                <b><u>Branch Energy, Energy Charge:</u></b>
+              </p>
+              <p>
+                9.743¢ per kWh
+                
+              </p></span
+            >
+            <span id="lblEFLtdsprates">
+              <p>
+                <b><u>Oncor Delivery Charges:</u></b>
+              </p>
+              <p>
+                $4.23 per month
+                
+              </p>
+              <p>
+                5.0339¢ per kWh
+                
+              </p></span
+            >
+            <span id="lblEFLpaymentservicefee">
+              <p>
+                <b><u>Payment Service Fee:</u></b>
+              </p>
+              <p>$10.00 per month*</p>
+            </span>
+            <div id="divEFLVerbiage" class="efl-verbiage">
+              <span id="lblEFLVerbiage">
+                <p>
+                  The average price above includes the costs for electricity
+                  generation, regulated charges from Oncor for
+                  transmission and delivery charges for service to Customer’s
+                  ESIID at the time of enrollment at an Energy Charge of
+                  9.743¢ per kWh, Service Account Charge of
+                  $0 monthly.
+                </p>
+                <p>
+                  The above averages exclude non-recurring charges from
+                  Oncor, other fees as stated in the Terms of Service,
+                  state and local sales tax, the PUC Assessment and gross
+                  receipts reimbursements, and Payment Service Fee.* The
+                  averages above may be different than the Price shown on the
+                  bill due to differences in Usage and Value-Added Services
+                  Customer selected.
+                </p>
+                <p>
+                  *Payment Service Fee is automatically waived for customers on
+                  Auto-Pay. In the event that you opt out of Auto-Pay during
+                  your contract term, the fee will not be waived for the given
+                  period for manual payments.
+                </p></span
+              >
+            </div>
+            <div>
+              <b><u>Selected Value-Added Services:</u></b>
+              <br /><br />
+              <span id="lblProductsList"
+                >none - 
+                </span
+              >
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="section-headers">Other Key Terms and Questions</td>
+          <td colspan="4">
+            <p>
+              <b><u>Paperless Billing:</u></b> This plan requires that you will
+              receive all bills and communications through email. If you need to
+              update your email address, please contact our Support Team at +1
+              833-601-2743 <br /><br />
+
+              <b><u>Auto-Pay:</u></b> By enrolling for Branch Energy
+              online, you are electing to pay your bill with Auto-Pay and are
+              required to maintain a valid payment method on file.
+              Branch Energy has your consent to draft payments from your
+              account on any date between the bill issuance date and due date.
+              If you wish to enroll for Branch Energy without Auto-Pay or
+              opt-out of Auto-Pay post enrollment, please contact our Support
+              Team at +1 833-601-2743. If you are not using Auto-Pay to pay your
+              bill, you are required to pay your bill by the due date and
+              Payment Service Fee will not be waived. <br /><br />
+              <i
+                >See Terms of Service statement for a full listing of fees,
+                deposit policy, and other terms.</i
+              >
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="section-headers" rowspan="12">Disclosure Chart</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q1" class="question">Type of Product</td>
+          <td colspan="2">Fixed Energy Full Requirements Rate</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q2" class="question">Contract Term</td>
+          <td colspan="2">
+            <span id="lblTerm">12</span> Months
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q3" class="question">
+            Do I have a termination fee or any fees associated with terminating
+            service?
+          </td>
+          <td colspan="2">
+            
+            <span id="lblIsterminationfee"
+              >Yes, the early termination fee associated with this product is a
+              $120 one-time fee</span
+            >
+            
+            <span id="lblTerminationDetails"></span>
+            <span id="lblProductETFs"></span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q4" class="question">
+            Can my price change during contract period?
+          </td>
+          <td colspan="2">Yes</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q5" class="question">
+            If my price can change, how will it change, and by how much?
+          </td>
+          <td colspan="2">
+            Your price may be adjusted to reflect changes in charges from the
+            TDU, changes to the ERCOT, PUCT, Texas Regional Entity or other
+            administrative fees, or other costs and expenses incurred by
+            <span id="lblBrandName3">Branch Energy.</span>
+            See the TOS for additional information.
+            <span id="lblProductPriceChanges"></span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q6" class="question">
+            What other fees may I be charged?
+          </td>
+          <td colspan="2">
+            Charges for required, nonrecurring fees will be listed as a separate
+            line item on your monthly bill. These may include penalties for late
+            payments, and a Collection Recovery fee as well as bank fees for
+            returned payments. <br /><br />
+
+            Please refer to the Terms of Service for more detailed information.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q7" class="question">
+            Is this a pre-pay or pay in advance product?
+          </td>
+          <td colspan="2">No</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q8" class="question">
+            Does the REP purchase excess distributed renewable generation?
+          </td>
+          <td colspan="2">No</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q9" class="question">Renewable Content</td>
+          <td colspan="2">
+            This product is
+            <span id="lblRenewableContent">100</span>%
+            renewable.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q10" class="question">
+            The statewide average for renewable content is
+          </td>
+          <td colspan="2">
+            <span id="lblStateAverageRenewableContent"
+              >20.7</span
+            >%
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            <span id="lblBrandName4"
+              >Branch Energy (Texas) LLC •</span
+            >
+            (PUC Certification Number #10295)<br />
+            2401 Fountain View Dr Ste 224 #71, Houston, TX 77057<br />
+            Toll-free:
+            <span id="lblCustomerCarePhone"
+              >833-502-2691
+              •</span
+            >
+            <br />
+            Email:
+            <a id="lnkCustomerCareEmail" href="mailTo:help@branchenergy.com"
+              >help@branchenergy.com</a
+            >
+            •
+            <a id="lnkBrandURL" href="" target="_blank"
+              >https://branch.energy</a
+            ><br />
+            <br />
+            EFL Version <span id="lblEFLVersion">1.0</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+  <br />
+  <br />
+
+  <body>
+    <table class="has-border efl">
+      <colgroup>
+        <col span="1" style="width: 700px" />
+      </colgroup>
+      <tbody>
+        <th colspan="8">
+          <div class="header">
+            <div id="logo">
+              <img
+                src="https://s3.amazonaws.com/appforest_uf/f1627500003483x958364584296489300/logo-white.svg"
+              />
+            </div>
+            <div style="color: white;" class="product">
+              <h2>
+                Etiqueta de Datos de Electricidad (EFL)<br />
+                <span id="lblBrandName">Branch Energy®</span><br />
+                <span id="lblproductName">Branch Fijo</span>
+                <span id="lblProductTerm">12 </span>
+                <span id="lblproductStructure">– Requerimientos completos de energía fija</span>
+                <span id="lblTDSPName">Oncor</span><br />
+                <span id="lblTodaysDate">09-26-2023</span>
+              </h2>
+            </div>
+          </div>
+        </th>
+        <div class="banner-rates">
+          <tr>
+            <td class="section-headers" rowspan="3">
+              Precio de la Electricidad
+            </td>
+            <th>Uso Mensual Promedio</th>
+            <th>500 kWh</th>
+            <th>1,000 kWh</th>
+            <th>2,000 kWh</th>
+          </tr>
+        </div>
+
+        <tr>
+          <td>Precio Promedio por kWh</td>
+          <td><span id="lbl500KWH">15.6¢</span></td>
+          <td><span id="lbl1000KWH">15.2¢</span></td>
+          <td><span id="lbl2000KWH">15.0¢</span></td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            <span id="lblEFLenergyrates">
+              <p>
+                <b><u>Branch Energy, Cargo de Energía:</u></b>
+              </p>
+              <p>
+                9.743¢ por kWh
+                
+              </p></span
+            >
+            <span id="lblEFLtdsprates">
+              <p>
+                <b><u>Oncor Los Gastos de Envío:</u></b>
+              </p>
+              <p>
+                $4.23 por mes
+                
+              </p>
+              <p>
+                5.0339¢ por kWh
+                
+              </p></span
+            >
+            <span id="lblEFLpaymentservicefee">
+              <p>
+                <b><u>La tarifa por servicio de pago:</u></b>
+              </p>
+              <p>$10.00 por mes*</p>
+            </span>
+            <div id="divEFLVerbiage" class="efl-verbiage">
+              <span id="lblEFLVerbiage">
+                <p>
+                  El precio promedio que figura más arriba incluye los costos de
+                  producción de electricidad, los cargos regulados de
+                  Oncor por la transmisión y los cargos por entrega del
+                  servicio al Identificador de Servicio Eléctrico (Electric
+                  Service Identifier ID, ESI ID) del cliente al momento de
+                  contratar el servicio con un cargo de energía de
+                  9.743¢ por kWh, Cargo por cuenta de servicio de
+                  $0 mensual.
+                </p>
+                <p>
+                  Los promedios anteriores excluyen los cargos no recurrentes de
+                  Oncor, otras tarifas según lo establecido en los
+                  Términos de Servicio, los impuestos locales y estatales sobre
+                  las ventas, la evaluación de la Comisión de Servicios Públicos
+                  (Public Utility Commission, PUC) y los reembolsos por ingresos
+                  brutos, y la tarifa por servicio de pago. Los promedios
+                  anteriores pueden ser diferentes al precio que se muestra en
+                  la factura debido a las diferencias en el uso y los servicios
+                  de valor agregado seleccionados por el cliente.
+                </p>
+                <p>
+                  *La tarifa por servicio de pago se exonera automáticamente
+                  para los clientes adheridos al pago automático. En el caso de
+                  que usted opte por dejar de utilizar el sistema de pago
+                  automático durante la vigencia de su contrato, esta tarifa no
+                  se exonerará durante el período determinado para los pagos
+                  manuales.
+                </p>
+              </span>
+            </div>
+            <div>
+              <b><u>Servicios de Valor Agregado Seleccionados:</u></b>
+              <br /><br />
+              <span id="lblProductsList"
+                >none - 
+                </span
+              >
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="section-headers">Otros términos y cuestiones clave</td>
+          <td colspan="4">
+            <p>
+              <b>Facturación electrónica:</b> este plan requiere que reciba
+              todas las facturas y comunicaciones por correo electrónico. Si
+              necesita actualizar su dirección de correo electrónico,
+              comuníquese con nuestro equipo de atención al cliente al +1
+              833-601-2743
+              <br />
+              <br />
+
+              <b>Pago automático:</b> al contratar el servicio de
+              Branch Energy en línea, usted elige pagar su factura
+              mediante el sistema de pago automático y deberá mantener un método
+              de pago válido registrado. Branch Energy tiene su
+              consentimiento para emitir pagos desde su cuenta en cualquier día
+              entre la fecha de emisión de la factura y la fecha de vencimiento.
+              Si desea contratar el servicio de Branch Energy sin pago
+              automático o ya no desea utilizar el sistema de pago automático
+              después de la contratación, comuníquese con nuestro equipo de
+              atención al cliente al +1 833-601-2743. Si no utiliza el sistema
+              de pago automático para pagar su factura, deberá pagarla antes de
+              la fecha de vencimiento y la tarifa por servicio de pago no se
+              exonerará. <br /><br />
+              <i
+                >Consulte la declaración de los Términos de Servicio para ver un
+                listado completo de tarifas, la política de depósitos y otros
+                términos.</i
+              >
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="section-headers" rowspan="12">Tabla de divulgación</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q1" class="question">Tipo de Producto</td>
+          <td colspan="2">Tarifa Requerimientos completos de energía fija</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q2" class="question">Plazo del Contrato</td>
+          <td colspan="2">
+            <span id="lblTerm">12</span> Meses
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q3" class="question">
+            ¿Tengo una tarifa de rescisión o alguna tarifa asociada a la
+            rescisión del servicio??
+          </td>
+          <td colspan="2">
+            
+            <span id="lblIsterminationfee"
+              >Sí, el cargo por cancelación anticipada asociado con este
+              producto es un cargo único de $120</span
+            >
+            
+            <span id="lblTerminationDetails"></span>
+            <span id="lblProductETFs"></span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q4" class="question">
+            ¿Puede cambiar mi precio durante el período del contrato?
+          </td>
+          <td colspan="2">Sí</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q5" class="question">
+            Si mi precio puede cambiar, ¿cómo cambiará y de cuánto será la
+            diferencia?
+          </td>
+          <td colspan="2">
+            Su precio se puede ajustar para reflejar cambios en los cargos de la
+            Compañía de Transmisión y Distribución de Electricidad (Transmission
+            Distribution Utility, TDU), los cambios en el Consejo de
+            Confiabilidad Eléctrica de Texas (Electric Reliability Council of
+            Texas, ERCOT), la Comisión de Servicios Públicos de Texas (Public
+            Utility Commission of Texas, PUCT), la Entidad Regional de Texas u
+            otras tarifas administrativas, u otros costos y gastos que
+            <span id="lblBrandName3">Branch Energy</span> efectuó.
+            Consulte los TOS para obtener más información.
+            <span id="lblProductPriceChanges"></span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q6" class="question">
+            ¿Qué otras tarifas me pueden cobrar?
+          </td>
+          <td colspan="2">
+            Los cargos por tarifas obligatorias que no son recurrentes
+            aparecerán como una partida presupuestaria aparte en su factura
+            mensual. Estos cargos pueden incluir multas por pagos atrasados y
+            una tarifa de recuperación de cartera, así como comisiones bancarias
+            por pagos devueltos. Para obtener información más detallada,
+            consulte los Términos de Servicio.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q7" class="question">
+            ¿Es este un producto prepago o de pago por adelantado?
+          </td>
+          <td colspan="2">No</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q8" class="question">
+            ¿El REP compra energía de generación distribuida renovable
+            adicional?
+          </td>
+          <td colspan="2">No</td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q9" class="question">Contenido Renovable</td>
+          <td colspan="2">
+            Este producto es
+            <span id="lblRenewableContent">100</span>%
+            renovable.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="Q10" class="question">
+            El promedio a nivel estatal de contenido renovable es del
+          </td>
+          <td colspan="2">
+            <span id="lblStateAverageRenewableContent"
+              >20.7</span
+            >%
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            <span id="lblBrandName4"
+              >Branch Energy  (Texas) LLC •</span
+            >
+            (Número de certificación de la PUC #10295)<br />
+            2401 Fountain View Dr Ste 224 #71, Houston, TX 77057<br />
+            Número Gratuito:
+            <span id="lblCustomerCarePhone"
+              >833-502-2691
+              •</span
+            >
+            <br />
+            Dirección de Correo Electrónico:
+            <a id="lnkCustomerCareEmail" href="mailTo:help@branchenergy.com"
+              >help@branchenergy.com</a
+            >
+            •
+            <a id="lnkBrandURL" href="" target="_blank"
+              >https://branch.energy</a
+            ><br />
+            <br />
+            Versión de la EFL
+            <span id="lblEFLVersion">1.0</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
