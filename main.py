@@ -11,6 +11,19 @@ headers = {
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
 }
 
+
+def clean_pdf_name(name):
+    # Remove special characters and replace consecutive spaces with a single underscore
+    cleaned_name = re.sub(r'[^a-zA-Z0-9\s]', '', name)
+    cleaned_name = re.sub(r'\s+', '_', cleaned_name)
+
+    # Convert each word to CamelCase
+    camel_case_name = '_'.join(word.capitalize()
+                               for word in cleaned_name.split('_'))
+
+    return camel_case_name
+
+
 try:
     response = requests.get(url, params=params, headers=headers)
     data = response.json()
@@ -54,10 +67,9 @@ try:
                     pdf_response = requests.get(fact_sheet_url)
                     pdf_content = pdf_response.content
 
-                    # Remove special characters from the generated file name
-                    pdf_name = re.sub(
-                        r'[^a-zA-Z0-9\s]', '',
-                        row['company_name'] + '_' + row['plan_name'])
+                    # Clean PDF name
+                    pdf_name = clean_pdf_name(
+                        f"{row['company_name']}_{row['plan_name']}")
 
                     fact_sheets_folder = 'fact_sheets'
                     os.makedirs(fact_sheets_folder, exist_ok=True)

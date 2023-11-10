@@ -1,0 +1,159 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+<head><meta charset="utf-8" /><meta http-equiv="x-ua-compatible" content="ie=edge" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>
+
+</title><link rel="stylesheet" href="./css/main.css" /><link href="../App_Themes/Default/1-foundation.css" type="text/css" rel="stylesheet" /><link href="../App_Themes/Default/2-deww.main.css" type="text/css" rel="stylesheet" /></head>
+<body id="myBody" style="background-color:#ffffff;">
+    <form method="post" action="./efl.aspx?RateID=552&amp;BrandID=2&amp;PromoCodeID=15" id="form1">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="1D93A7B5" />
+        <table class="header" >
+		<tr>
+			<td id="tdHeaderLeft" class="left" style="background-color:#0F3762;">
+				<h2>
+					Electricity Facts Label (EFL)<br />
+					<span id="lblBrandName1">JUICE</span> – FIXED PRICE - <span id="lblPlanDisplayName">KIWISURGE</span><br />
+					<span id="lblTDSPName">ONCOR</span><br />
+					<span id="lblTodaysDate">11/10/2023</span>
+				</h2>
+			</td>
+
+			<td id="tdHeaderRight" class="right" style="background-color:#0F3762;">
+				<img id="imgLogo" src="../App_Assets/Logos/juice-logo-orange.svg" />
+			</td>
+
+		</tr>
+	    </table>
+
+	    <table class="has-border efl">
+		<tr>
+			<td id="tdElectricityPrice" class="red" rowspan="3" style="background-color:#0F3762;">Electricity Price</td>
+
+			<td>Average Monthly Use</td>
+			<td class="text-center">500 kWh</td>
+			<td class="text-center">1,000 kWh</td>
+			<td class="text-center">2,000 kWh</td>
+		</tr>
+		<tr>
+			<td>Average Price per kWh</td>
+			<td class="text-center"><span id="lbl500KWH">14.3&cent;</span></td>
+			<td class="text-center"><span id="lbl1000KWH">13.9&cent;</span></td>
+			<td class="text-center"><span id="lbl2000KWH">13.7&cent;</span></td>			
+		</tr>
+		<tr>
+			<td colspan="4">
+				 
+                <div id="divCustomEFLVerbiage" class="custom-efl-verbiage">
+                    <span id="lblCustomEFLVerbiage"><p>This price disclosure for electric service is an example that is calculated utilizing the following price components:</p>
+<table border="0" cellspacing="0" cellpadding="0">
+    <tbody>
+        <tr>
+            <td>Base Charge</td>
+            <td>$0.00</td>
+            <td>per billing cycle</td>
+        </tr>
+        <tr>
+            <td>Energy Charge (Surge)</td>
+            <td>$0.1389</td>
+            <td>per kWh (Daily 1:00 PM to 6:59 PM)</td>
+        </tr>
+        <tr>
+            <td>Energy Charge (Save)</td>
+            <td>$0.0749</td>
+            <td>per kWh (Daily all other times)</td>
+        </tr>
+        <tr>
+            <td>TDU Delivery Charge</td>
+            <td>$0.050339</td>
+            <td>per kWh</td>
+        </tr>
+        <tr>
+            <td>TDU Delivery Charge</td>
+            <td>$4.23</td>
+            <td>per billing cycle</td>
+        </tr>
+    </tbody>
+</table>
+<p>This price disclosure is an example based on average prices. Your actual average price for electric service will vary according to your usage. The price you pay each month will consist of the Base Charge, Energy Charges, and TDU Delivery Charges. TDU Delivery Charges include all recurring charges from your TDU passed through to you without mark-up.<br />
+<br />
+Average price calculations are based on a consumption profile over 12 months assuming 15.0%&nbsp;of consumption occurs during the peak energy ("Surge") charge period defined above. TDU charges will continue to be passed through to you without markup for all time periods.</p>
+<p>Each month your bill will also include (i) all applicable taxes, including sales tax and reimbursement for the state miscellaneous gross receipts tax, (ii) TDU fees for underground service (if applicable at your location), (iii) facility relocation fees or other charges ordered by a municipality. See your TDU&rsquo;s tariff for a list of cities and authorized charges. The average prices listed above do not include any of the charges listed in (i), (ii) or (iii).</p></span>
+                </div>
+			</td>
+		</tr>
+		<tr>
+			<td id="tdOtherKeyTerms" class="red" style="background-color:#0F3762;">Other Key Terms and Questions</td>
+
+			<td colspan="4">
+				<p>
+					<em>See Terms of Service statement for a full listing of fees, deposit policy, and other terms.</em>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td id="tdDisclosureChart" class="red" rowspan="12" style="background-color:#0F3762;">Disclosure Chart</td>
+
+		</tr>
+		<tr>
+			<td colspan="2">Type of Product</td>
+			<td colspan="2"><span id="lblTypeOfProduct">Fixed Rate</span></td>
+		</tr>
+		<tr>
+			<td colspan="2">Contract Term</td>
+			<td colspan="2"><span id="lblTerm">12</span> Months</td>
+		</tr>
+		<tr>
+			<td colspan="2">Do I have a termination fee or any fees associated with terminating service?</td>
+			<td colspan="2">
+				Yes, <span id="lblBrandName2">JUICE</span> will assess a termination fee of <span id="lblTerminationFee">$20.00 per month remaining in the Initial Term</span>.  <span id="lblProductETFs"></span>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">Can my price change during contract period?</td>
+			<td colspan="2">Yes</td>			
+		</tr>
+		<tr>
+			<td colspan="2">If my price can change, how will it change, and by how much?</td>
+			<td colspan="2">
+				Your price may be adjusted to reflect changes in charges from the TDU, changes to the ERCOT, PUCT, Texas Regional Entity or other administrative fees, or other costs and expenses incurred by <span id="lblBrandName3">JUICE</span>.  Refer to the Terms of Service for additional information. 
+			</td>			
+		</tr>
+		<tr>
+			<td colspan="2">What other fees may I be charged?</td>
+			<td colspan="2">Please refer to the Terms of Service. These fees are not included in Price.</td>			
+		</tr>
+		<tr>
+			<td colspan="2">Is this a pre-pay or pay in advance product?</td>
+			<td colspan="2">No</td>			
+		</tr>
+		<tr>
+			<td colspan="2">Does the REP purchase excess distributed renewable generation?</td>
+			<td colspan="2"><span id="lblNetMeteringEligible">No</span></td>			
+		</tr>
+		<tr>
+			<td colspan="2">Renewable Content</td>
+			<td colspan="2">This product is <span id="lblRenewableContent">21</span>% renewable.</td>			
+		</tr>
+		<tr>
+			<td colspan="2">The statewide average for renewable content is</td>
+			<td colspan="2"><span id="lblStateAverageRenewableContent">29</span>%</td>
+		</tr>
+		<tr>
+			<td colspan="4">				
+				<span id="lblBrandName4">MI Texas REP 1, LLC dba JUICE</span> (PUC Certification Number <span id="lblPUCTNumber">10298</span>)<br />
+				PO Box 130309 Spring, TX 77393<br />
+				Toll-free <span id="lblCustomerCarePhone">(888) 832-3596</span> <span id="lblCustomerCareHours">(Monday-Friday 7am-7pm CT)</span><br />
+				Email: <a id="lnkCustomerCareEmail" href="mailTo:care@juicetx.com">care@juicetx.com</a>    <a id="lnkBrandURL" href="https://www.juicetx.com" target="_blank">https://www.juicetx.com</a><br />
+				<br />
+				EFL Version <span id="lblEFLVersion">343505-405493-189493-389362-R-552</span>
+			</td>
+		</tr>
+	    </table>
+    </form>
+<script type="text/javascript" src="/bnith__5XoSlfNfkO94PAimwrRItHvodrEY8HOf791zAJzPwky6ytf4XvVuLXzptmXrCCSLsgoZMkhaPms="></script> <script language="JavaScript" type="text/javascript">const _0x35e8=['visitorId','18127kSXadA','356575NPKVMA','7306axxsAH','get','657833TzFjkt','717302TQdBjl','34lMHocq','x-bni-rncf=1699597156820;expires=Thu, 01 Jan 2037 00:00:00 UTC;path=/;','61XMWbpU','cookie',';expires=Thu, 01 Jan 2037 00:00:00 UTC;path=/;','then','651866OSUgMa','811155xdatvf','x-bni-fpc='];function _0x258e(_0x5954fe,_0x43567d){return _0x258e=function(_0x35e81f,_0x258e26){_0x35e81f=_0x35e81f-0x179;let _0x1280dc=_0x35e8[_0x35e81f];return _0x1280dc;},_0x258e(_0x5954fe,_0x43567d);}(function(_0x5674de,_0xdcf1af){const _0x512a29=_0x258e;while(!![]){try{const _0x55f636=parseInt(_0x512a29(0x17b))+-parseInt(_0x512a29(0x179))*parseInt(_0x512a29(0x17f))+-parseInt(_0x512a29(0x183))+-parseInt(_0x512a29(0x184))+parseInt(_0x512a29(0x187))*parseInt(_0x512a29(0x17d))+parseInt(_0x512a29(0x188))+parseInt(_0x512a29(0x17c));if(_0x55f636===_0xdcf1af)break;else _0x5674de['push'](_0x5674de['shift']());}catch(_0xd3a1ce){_0x5674de['push'](_0x5674de['shift']());}}}(_0x35e8,0x6b42d));function getClientIdentity(){const _0x47e86b=_0x258e,_0x448fbc=FingerprintJS['load']();_0x448fbc[_0x47e86b(0x182)](_0x4bb924=>_0x4bb924[_0x47e86b(0x17a)]())[_0x47e86b(0x182)](_0x2f8ca1=>{const _0x44872c=_0x47e86b,_0xa48f50=_0x2f8ca1[_0x44872c(0x186)];document[_0x44872c(0x180)]=_0x44872c(0x185)+_0xa48f50+_0x44872c(0x181),document[_0x44872c(0x180)]=_0x44872c(0x17e);});}getClientIdentity();</script></body>
+
+<script type="text/javascript">var _0xcaad=["indexOf","; path=/","cookie","=","x-bni-ja","stack","phantomjs","plugins","length","onmousemove"];var err;function indexOfString(_0x1ce0x3,_0x1ce0x4){return _0x1ce0x3[_0xcaad[0]](_0x1ce0x4)}try{null[0]()}catch(e){err=e};function setCookie(_0x1ce0x6){var _0x1ce0x7=2003587618;var _0x1ce0x8=1897113798;var _0x1ce0x9=_0x1ce0x7+_0x1ce0x8+_0xcaad[1];document[_0xcaad[2]]=_0x1ce0x6+_0xcaad[3]+_0x1ce0x9}function set_answer_cookie(){setCookie(_0xcaad[4])}function set_answer_cookie_1(){set_answer_cookie()}if((indexOfString(err[_0xcaad[5]],_0xcaad[6])> -1)||(!(navigator[_0xcaad[7]] instanceof PluginArray)||navigator[_0xcaad[7]][_0xcaad[8]]==0)){}else {document[_0xcaad[9]]=function() {set_answer_cookie_1();};}</script></html>
