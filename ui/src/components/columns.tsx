@@ -1,5 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, ChevronRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Plan } from "@/types/plan"
@@ -24,7 +24,30 @@ function SortHeader({
   )
 }
 
+function priceColor(price: number): string {
+  if (price <= 10) return "text-green-600 font-semibold"
+  if (price <= 12) return "text-green-500"
+  if (price <= 14) return "text-yellow-600"
+  return "text-red-500"
+}
+
 export const columns: ColumnDef<Plan>[] = [
+  {
+    id: "expand",
+    header: "",
+    cell: ({ row }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-6 w-6 p-0"
+        onClick={() => row.toggleExpanded()}
+      >
+        <ChevronRight
+          className={`h-4 w-4 transition-transform ${row.getIsExpanded() ? "rotate-90" : ""}`}
+        />
+      </Button>
+    ),
+  },
   {
     accessorKey: "company_name",
     header: ({ column }) => <SortHeader column={column} label="Company" />,
@@ -77,29 +100,26 @@ export const columns: ColumnDef<Plan>[] = [
   {
     accessorKey: "price_kwh500",
     header: ({ column }) => <SortHeader column={column} label="500 kWh" />,
-    cell: ({ row }) => (
-      <span className="text-sm font-mono">
-        {row.getValue<number>("price_kwh500")}¢
-      </span>
-    ),
+    cell: ({ row }) => {
+      const price = row.getValue<number>("price_kwh500")
+      return <span className={`text-sm font-mono ${priceColor(price)}`}>{price}¢</span>
+    },
   },
   {
     accessorKey: "price_kwh1000",
     header: ({ column }) => <SortHeader column={column} label="1000 kWh" />,
-    cell: ({ row }) => (
-      <span className="text-sm font-mono font-semibold">
-        {row.getValue<number>("price_kwh1000")}¢
-      </span>
-    ),
+    cell: ({ row }) => {
+      const price = row.getValue<number>("price_kwh1000")
+      return <span className={`text-sm font-mono font-bold ${priceColor(price)}`}>{price}¢</span>
+    },
   },
   {
     accessorKey: "price_kwh2000",
     header: ({ column }) => <SortHeader column={column} label="2000 kWh" />,
-    cell: ({ row }) => (
-      <span className="text-sm font-mono">
-        {row.getValue<number>("price_kwh2000")}¢
-      </span>
-    ),
+    cell: ({ row }) => {
+      const price = row.getValue<number>("price_kwh2000")
+      return <span className={`text-sm font-mono ${priceColor(price)}`}>{price}¢</span>
+    },
   },
   {
     accessorKey: "renewable_energy_description",
