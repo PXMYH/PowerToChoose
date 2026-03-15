@@ -18,6 +18,7 @@ PTC_URL = "https://www.powertochoose.org/en-us/service/v1/"
 async def get_plans(
     zip_code: str = Query(default="78665"),
     estimated_use: int = Query(default=1000),
+    plan_type: str = Query(default=""),
 ):
     payload = {
         "parameters": {
@@ -28,7 +29,7 @@ async def get_plans(
             "plan_mo_from": "",
             "plan_mo_to": "",
             "estimated_use": estimated_use,
-            "plan_type": "1",
+            "plan_type": plan_type,
             "rating_total": "",
             "include_details": True,
             "language": 0,

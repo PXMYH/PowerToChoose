@@ -1,14 +1,18 @@
 import type { Plan } from "@/types/plan"
 
-export async function fetchPlans(
-  zipCode: string,
+export interface FetchPlansParams {
+  zipCode: string
   estimatedUse: number
-): Promise<Plan[]> {
-  const params = new URLSearchParams({
-    zip_code: zipCode,
-    estimated_use: String(estimatedUse),
+  planType: string // "" = all, "1" = fixed, "0" = variable
+}
+
+export async function fetchPlans(params: FetchPlansParams): Promise<Plan[]> {
+  const searchParams = new URLSearchParams({
+    zip_code: params.zipCode,
+    estimated_use: String(params.estimatedUse),
+    plan_type: params.planType,
   })
-  const res = await fetch(`/api/plans?${params}`)
+  const res = await fetch(`/api/plans?${searchParams}`)
   if (!res.ok) throw new Error(`Failed to fetch plans: ${res.statusText}`)
   return res.json()
 }

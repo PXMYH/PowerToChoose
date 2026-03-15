@@ -9,7 +9,7 @@ import {
   type ColumnFiltersState,
   type ExpandedState,
 } from "@tanstack/react-table"
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import {
   Table,
   TableBody,
@@ -29,11 +29,11 @@ interface PlanTableProps {
 
 function PlanDetail({ plan }: { plan: Plan }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/50 text-sm">
-      <div className="space-y-2">
-        <h4 className="font-semibold">Plan Details</h4>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-muted/50 text-sm border-t max-w-[1200px]">
+      <div className="space-y-2 min-w-0">
+        <h4 className="font-semibold text-sm">Plan Details</h4>
         {plan.special_terms && (
-          <p className="text-muted-foreground text-xs leading-relaxed">
+          <p className="text-muted-foreground text-xs leading-relaxed break-words">
             {plan.special_terms}
           </p>
         )}
@@ -50,9 +50,9 @@ function PlanDetail({ plan }: { plan: Plan }) {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <h4 className="font-semibold">Documents</h4>
-        <div className="flex flex-col gap-1">
+      <div className="space-y-2 min-w-0">
+        <h4 className="font-semibold text-sm">Documents</h4>
+        <div className="flex flex-col gap-1.5">
           {plan.fact_sheet && (
             <a
               href={plan.fact_sheet}
@@ -86,8 +86,8 @@ function PlanDetail({ plan }: { plan: Plan }) {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <h4 className="font-semibold">Contact</h4>
+      <div className="space-y-2 min-w-0">
+        <h4 className="font-semibold text-sm">Contact</h4>
         {plan.enroll_phone && (
           <p className="text-xs">
             <span className="font-medium">Phone: </span>
@@ -137,50 +137,52 @@ export function PlanTable({ data }: PlanTableProps) {
 
   return (
     <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => (
-              <>
-                <TableRow key={row.id} className="cursor-pointer" onClick={() => row.toggleExpanded()}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-                {row.getIsExpanded() && (
-                  <TableRow key={`${row.id}-detail`}>
-                    <TableCell colSpan={columns.length} className="p-0">
-                      <PlanDetail plan={row.original} />
-                    </TableCell>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="whitespace-nowrap">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
+                <Fragment key={row.id}>
+                  <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => row.toggleExpanded()}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="whitespace-nowrap">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                )}
-              </>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No plans found.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <div className="p-2 text-xs text-muted-foreground text-right">
+                  {row.getIsExpanded() && (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="p-0 whitespace-normal">
+                        <PlanDetail plan={row.original} />
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </Fragment>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  No plans found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="p-2 text-xs text-muted-foreground text-right border-t">
         {table.getFilteredRowModel().rows.length} plans
       </div>
     </div>
