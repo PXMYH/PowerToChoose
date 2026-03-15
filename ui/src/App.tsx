@@ -1,19 +1,52 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { PlanTable } from "@/components/PlanTable"
+import { FilterControls, type Filters } from "@/components/FilterControls"
 import { fetchPlans } from "@/lib/api"
 import type { Plan } from "@/types/plan"
+
+const DEFAULT_FILTERS: Filters = {
+  zipCode: "78665",
+  estimatedUse: 1000,
+  maxPrice: 20,
+  termLengths: [],
+  renewableOnly: false,
+  hidePrepaid: true,
+}
 
 function App() {
   const [plans, setPlans] = useState<Plan[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
+
+  const loadPlans = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await fetchPlans(filters.zipCode, filters.estimatedUse)
+      setPlans(data)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unknown error")
+    } finally {
+      setLoading(false)
+    }
+  }, [filters.zipCode, filters.estimatedUse])
 
   useEffect(() => {
-    fetchPlans("78665", 1000)
-      .then(setPlans)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false))
-  }, [])
+    loadPlans()
+  }, [loadPlans])
+
+  const filteredPlans = useMemo(() => {
+    return plans.filter((p) => {
+      if (p.price_kwh1000 > filters.maxPrice) return false
+      if (filters.termLengths.length > 0 && !filters.termLengths.includes(p.term_value))
+        return false
+      if (filters.renewableOnly && p.renewable_energy_description !== "100% Renewable")
+        return false
+      if (filters.hidePrepaid && p.prepaid) return false
+      return true
+    })
+  }, [plans, filters])
 
   return (
     <div className="min-h-screen bg-background">
@@ -27,9 +60,19 @@ function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6">
-        {loading && <p className="text-center py-12 text-muted-foreground">Loading plans...</p>}
+        <FilterControls
+          filters={filters}
+          onChange={setFilters}
+          onSearch={loadPlans}
+          loading={loading}
+          planCount={filteredPlans.length}
+        />
+
+        {loading && (
+          <p className="text-center py-12 text-muted-foreground">Loading plans...</p>
+        )}
         {error && <p className="text-center py-12 text-red-500">{error}</p>}
-        {!loading && !error && <PlanTable data={plans} />}
+        {!loading && !error && <PlanTable data={filteredPlans} />}
       </main>
     </div>
   )
