@@ -12,7 +12,8 @@ export async function fetchPlans(params: FetchPlansParams): Promise<Plan[]> {
     estimated_use: String(params.estimatedUse),
     plan_type: params.planType,
   })
-  const res = await fetch(`/api/plans?${searchParams}`)
+  const base = import.meta.env.VITE_API_URL || ""
+  const res = await fetch(`${base}/api/plans?${searchParams}`)
   if (!res.ok) throw new Error(`Failed to fetch plans: ${res.statusText}`)
   return res.json()
 }
