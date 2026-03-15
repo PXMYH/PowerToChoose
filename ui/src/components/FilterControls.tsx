@@ -209,7 +209,7 @@ export function FilterControls({
             <Label className="text-xs font-medium">Electric Company</Label>
             <Select
               value={filters.company}
-              onValueChange={(v) => onChange({ ...filters, company: v === "all" ? "" : v })}
+              onValueChange={(v) => onChange({ ...filters, company: v === "all" ? "" : v ?? "" })}
             >
               <SelectTrigger className="h-8 text-xs">
                 <SelectValue placeholder="All companies" />
@@ -291,7 +291,7 @@ export function FilterControls({
             <Label className="text-xs font-medium">Renewable Energy</Label>
             <Select
               value={filters.renewableRange}
-              onValueChange={(v) => onChange({ ...filters, renewableRange: v })}
+              onValueChange={(v) => onChange({ ...filters, renewableRange: v ?? "all" })}
             >
               <SelectTrigger className="h-8 text-xs">
                 <SelectValue />
