@@ -6,31 +6,26 @@
 
 **Core Value:** Accurately extract and store structured pricing, charges, and contract details from EFL PDFs so users can make informed electricity plan comparisons beyond what the Power to Choose website provides.
 
-**Current Focus:** Phase 1 - PDF Processing Infrastructure
+**Current Focus:** All 4 phases complete. Ready for GitHub issue closure.
 
 ## Current Position
 
-**Phase:** Phase 1: PDF Processing Infrastructure
-**Plan:** 4 plans in 3 waves (planning complete, ready for execution)
-**Status:** Executing
-**Progress:** `[ · · · · ]` 0% (0/4 phases)
+**Phase:** All complete
+**Status:** Done
+**Progress:** `[████]` 100% (4/4 phases)
 
 ## Performance Metrics
 
 **Phases:**
-- Completed: 0
+- Completed: 4
 - In Progress: 0
-- Remaining: 4
+- Remaining: 0
 - Total: 4
 
-**Plans:**
-- Completed: 0
-- In Progress: 0
-- Total Plans: TBD (awaiting phase planning)
+**Tests:** 51 passing
 
 **Velocity:**
-- Plans per session: N/A (no sessions yet)
-- Phases per milestone: N/A (first milestone)
+- All 4 phases completed in a single milestone session
 
 ## Accumulated Context
 
@@ -38,51 +33,39 @@
 
 | Decision | Rationale | Impact |
 |----------|-----------|--------|
-| 4-phase roadmap structure | Natural requirement clustering + dependency flow | Foundation → Extraction → Storage → Validation |
+| 4-phase roadmap structure | Natural requirement clustering + dependency flow | Foundation -> Extraction -> Storage -> Validation |
 | Phase 1 before LLM work | Prevent wasted LLM credits on unusable PDFs | De-risks Phase 2 experimentation |
 | Separate TDU from provider charges | Accurate cost comparison requires separation | Schema design in Phase 3, extraction prompt in Phase 2 |
-| Standard granularity (4 phases) | Balanced grouping for 27 requirements | Each phase delivers coherent capability |
+| Explicit row ID query after upsert | SQLite lastrowid returns 0 on ON CONFLICT UPDATE | Fixed critical bug in Phase 3 storage layer |
+| Confidence scoring with weighted fields | Different fields have different importance for plan comparison | Auto-flags incomplete extractions for review |
 
-### Open Questions
+### Resolved Questions
 
-1. **EFL sample collection:** Need 10-20 representative EFL PDFs before finalizing Phase 2 approach (research recommendation)
-2. **nvidia/nemotron rate limits:** Free-tier limits not documented by OpenRouter, need testing in Phase 2
-3. **Power to Choose API validation data:** Unclear if API provides detailed pricing tiers for cross-validation in Phase 4
+1. **EFL sample collection:** Prompt-based extraction works without pre-collected samples
+2. **nvidia/nemotron rate limits:** Handled with tenacity exponential backoff retry
+3. **Power to Choose API validation data:** API provides price_kwh1000 for cross-validation
 
 ### Blockers
 
-None currently. Ready to begin Phase 1 planning.
-
-### TODOs
-
-- [ ] Run `/gsd:plan-phase 1` to decompose Phase 1 into executable plans
-- [ ] Consider collecting sample EFL PDFs before Phase 2 planning (research flag)
+None. Project complete.
 
 ## Session Continuity
 
-### Previous Session Summary
+### Completed Work
 
-Project initialized via `/gsd:new-project`. Research completed, requirements defined, roadmap created.
+All 4 phases implemented and committed:
+- **Phase 1:** PDF download/cache, classification, job tracking, background tasks
+- **Phase 2:** LLM client (LiteLLM + instructor), extraction prompt, pipeline integration
+- **Phase 3:** Normalized SQLite schema (plans/tiers/charges), upsert storage, results endpoint
+- **Phase 4:** Batch processing, sanity checks, confidence scoring, PTC cross-validation
 
-**Handoff to next session:**
-- Roadmap structure: 4 phases covering 27 requirements with 100% coverage
-- All planning artifacts written to `.planning/` directory
-- Ready for Phase 1 planning
+### Next Steps
 
-### Context for Next Session
-
-Start here: Run `/gsd:plan-phase 1` to create executable plans for PDF Processing Infrastructure.
-
-**Phase 1 scope:** PDF download (httpx + retry), caching, format detection, background task orchestration (FastAPI BackgroundTasks), job status tracking.
-
-**Key files to understand:**
-- `.planning/ROADMAP.md` - Phase structure and success criteria
-- `.planning/REQUIREMENTS.md` - Detailed requirements with traceability
-- `.planning/research/SUMMARY.md` - Technical recommendations and pitfall warnings
-
-**Research flags:** Phase 2 (LLM Integration) needs deeper research after collecting sample EFLs. Phase 1 uses standard patterns (no research needed).
+- Push to GitHub and close issue #2
+- Consider v2 features: bill simulation, time-of-use rates, historical tracking
 
 ---
 
 *Project initialized: 2026-03-22*
-*State tracking: Active*
+*Project completed: 2026-03-22*
+*State tracking: Complete*

@@ -7,10 +7,10 @@
 
 ## Phases
 
-- [ ] **Phase 1: PDF Processing Infrastructure** - Establish reliable PDF download, caching, format detection, and background task orchestration
-- [ ] **Phase 2: LLM Integration + Data Extraction** - Integrate OpenRouter LLM and extract structured data from EFL PDFs
-- [ ] **Phase 3: Database Schema + Storage** - Design and implement SQLite schema with proper indexes and constraints
-- [ ] **Phase 4: API Integration + Validation** - Add API endpoints and validate extracted data against external sources
+- [x] **Phase 1: PDF Processing Infrastructure** - Establish reliable PDF download, caching, format detection, and background task orchestration
+- [x] **Phase 2: LLM Integration + Data Extraction** - Integrate OpenRouter LLM and extract structured data from EFL PDFs
+- [x] **Phase 3: Database Schema + Storage** - Design and implement SQLite schema with proper indexes and constraints
+- [x] **Phase 4: API Integration + Validation** - Add API endpoints and validate extracted data against external sources
 
 ## Phase Details
 
@@ -32,10 +32,10 @@
 **Plans:** 4 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project structure, config, routers, and Pydantic models
-- [ ] 01-02-PLAN.md — PDF downloader with retry logic and local caching
-- [ ] 01-03-PLAN.md — PDF classification (text vs scanned) and text extraction
-- [ ] 01-04-PLAN.md — SQLite job tracking, background tasks, and EFL API endpoints
+- [x] 01-01-PLAN.md — Project structure, config, routers, and Pydantic models
+- [x] 01-02-PLAN.md — PDF downloader with retry logic and local caching
+- [x] 01-03-PLAN.md — PDF classification (text vs scanned) and text extraction
+- [x] 01-04-PLAN.md — SQLite job tracking, background tasks, and EFL API endpoints
 
 ---
 
@@ -57,9 +57,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — EFLData Pydantic model, LiteLLM + instructor deps, OpenRouter config, LLM client
-- [ ] 02-02-PLAN.md — Extraction prompt, EFL extractor service with retry logic
-- [ ] 02-03-PLAN.md — Pipeline integration, extracted_data storage, end-to-end tests
+- [x] 02-01-PLAN.md — EFLData Pydantic model, LiteLLM + instructor deps, OpenRouter config, LLM client
+- [x] 02-02-PLAN.md — Extraction prompt, EFL extractor service with retry logic
+- [x] 02-03-PLAN.md — Pipeline integration, extracted_data storage, end-to-end tests
 
 ---
 
@@ -78,7 +78,7 @@ Plans:
 4. Charge types (base/energy/tdu_delivery) are clearly distinguished in schema
 5. Database supports queries needed for later bill simulation and comparison analysis
 
-**Plans**: TBD
+**Plans**: Executed inline (schema.sql, connection.py, test_storage.py)
 
 ---
 
@@ -97,18 +97,18 @@ Plans:
 4. Sanity checks automatically flag impossible data (negative prices, missing required fields, pricing tier gaps)
 5. Low-confidence extractions are marked with confidence scores for manual review
 
-**Plans**: TBD
+**Plans**: Executed inline (validator.py, validation.py, efl.py router updates, tests)
 
 ---
 
 ## Progress
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. PDF Processing Infrastructure | 0/4 | Executing | - |
-| 2. LLM Integration + Data Extraction | 0/3 | Planned | - |
-| 3. Database Schema + Storage | 0/0 | Not started | - |
-| 4. API Integration + Validation | 0/0 | Not started | - |
+| Phase | Status | Completed |
+|-------|--------|-----------|
+| 1. PDF Processing Infrastructure | Done | 2026-03-22 |
+| 2. LLM Integration + Data Extraction | Done | 2026-03-22 |
+| 3. Database Schema + Storage | Done | 2026-03-22 |
+| 4. API Integration + Validation | Done | 2026-03-22 |
 
 ## Coverage
 
@@ -121,4 +121,4 @@ All requirements mapped to exactly one phase. No orphaned requirements.
 ---
 
 *Roadmap created: 2026-03-22*
-*Next step: `/gsd:execute-phase 1`*
+*Completed: 2026-03-22*
