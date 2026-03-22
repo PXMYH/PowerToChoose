@@ -29,7 +29,13 @@
 4. Background tasks process EFL extraction without blocking API responses
 5. Job status can be queried at any time showing current processing state (queued/downloading/extracting/parsing/storing/completed/failed)
 
-**Plans**: TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Project structure, config, routers, and Pydantic models
+- [ ] 01-02-PLAN.md — PDF downloader with retry logic and local caching
+- [ ] 01-03-PLAN.md — PDF classification (text vs scanned) and text extraction
+- [ ] 01-04-PLAN.md — SQLite job tracking, background tasks, and EFL API endpoints
 
 ---
 
@@ -94,7 +100,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. PDF Processing Infrastructure | 0/0 | Not started | - |
+| 1. PDF Processing Infrastructure | 0/4 | Planned | - |
 | 2. LLM Integration + Data Extraction | 0/0 | Not started | - |
 | 3. Database Schema + Storage | 0/0 | Not started | - |
 | 4. API Integration + Validation | 0/0 | Not started | - |
@@ -110,4 +116,4 @@ All requirements mapped to exactly one phase. No orphaned requirements.
 ---
 
 *Roadmap created: 2026-03-22*
-*Next step: `/gsd:plan-phase 1`*
+*Next step: `/gsd:execute-phase 1`*
