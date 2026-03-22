@@ -132,13 +132,55 @@ A document processing pipeline that downloads Electricity Facts Labels (EFLs) an
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
 ## Conventions
 
-Conventions not yet established. Will populate as patterns emerge during development.
+- **Config**: All settings via `config.py` (pydantic-settings). Access as `from config import settings`.
+- **Routers**: Each domain gets its own file in `routers/`. Register in `main.py` via `app.include_router()`.
+- **Models**: Pydantic models in `models/`. Use `Literal` for enums in data models, `str Enum` for internal state.
+- **Services**: Business logic in `services/`. Keep thin — one concern per file.
+- **DB access**: All queries in `database/connection.py`. Use `aiosqlite.connect(settings.DATABASE_PATH)` per operation (no connection pooling needed for SQLite).
+- **Upsert pattern**: After `ON CONFLICT DO UPDATE`, always query the row ID explicitly — `cursor.lastrowid` returns 0 on updates.
+- **Async wrappers**: Sync libraries (pdfplumber, instructor) are wrapped with `asyncio.to_thread()`.
+- **Retry**: Use `tenacity` with exponential backoff for external calls (HTTP downloads, LLM API).
+- **Tests**: pytest + pytest-asyncio. Each async test creates its own tmp_path DB via `monkeypatch`. Run with `uv run python -m pytest tests/ -v`.
+- **Imports**: Use relative module paths (`from config import settings`, not absolute filesystem paths).
 <!-- GSD:conventions-end -->
 
 <!-- GSD:architecture-start source:ARCHITECTURE.md -->
 ## Architecture
 
-Architecture not yet mapped. Follow existing patterns found in the codebase.
+### Pipeline Flow
+```
+POST /api/efl/process → create_job → BackgroundTask(process_efl_task)
+                                          ↓
+                          download_pdf (httpx + tenacity retry, SHA256 cache)
+                                          ↓
+                          extract_text (pdfplumber, classify text vs scanned)
+                                          ↓
+                          extract_efl_data (LiteLLM + instructor → EFLData)
+                                          ↓
+                          store_efl_data (SQLite: plans + pricing_tiers + charges)
+```
+
+### Key Files
+| File | Purpose |
+|------|---------|
+| `main.py` | FastAPI app, lifespan (init_db + cache dir), CORS, router registration |
+| `config.py` | `Settings` class with env vars (DATABASE_PATH, OPENROUTER_API_KEY, LLM_MODEL) |
+| `routers/plans.py` | PTC API proxy |
+| `routers/efl.py` | EFL process/batch/status/results/validate/cross-validate endpoints |
+| `services/downloader.py` | PDF download with retry + content-addressable cache |
+| `services/pdf_processor.py` | pdfplumber text extraction + scanned PDF detection |
+| `services/llm_client.py` | `instructor.from_litellm(litellm.completion)` factory |
+| `services/efl_extractor.py` | System prompt + `_call_llm()` with retry → `EFLData` |
+| `services/validator.py` | `sanity_check()`, `compute_confidence()`, `cross_validate_with_ptc()` |
+| `database/schema.sql` | DDL for jobs, plans, pricing_tiers, charges + indexes |
+| `database/connection.py` | `init_db()`, `store_efl_data()`, `get_plan_data()`, job CRUD |
+| `tasks/process_efl.py` | 4-stage pipeline orchestrator (download → extract → parse → store) |
+
+### Database Schema
+- **jobs** — background task tracking (status, error, extracted_data JSON)
+- **plans** — one row per unique plan (UNIQUE on plan_id + provider + name)
+- **pricing_tiers** — price per kWh at 500/1000/2000 kWh (FK to plans)
+- **charges** — categorized charges: base, tdu_delivery, tdu_fixed, minimum_usage (FK to plans)
 <!-- GSD:architecture-end -->
 
 <!-- GSD:workflow-start source:GSD defaults -->
