@@ -1,0 +1,158 @@
+name: Daily EFL Sync
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # 6am UTC daily
+  workflow_dispatch:
+    inputs:
+      zip_code:
+        description: "Zip code to fetch plans for"
+        default: "78665"
+        required: false
+      max_plans:
+        description: "Max plans to process (0 = all)"
+        default: "0"
+        required: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ vars.VITE_API_URL }}
+      ZIP_CODE: ${{ github.event.inputs.zip_code || '78665' }}
+      MAX_PLANS: ${{ github.event.inputs.max_plans || '0' }}
+    steps:
+      - name: Validate API URL
+        run: |
+          if [ -z "$API_URL" ]; then
+            echo "::error::VITE_API_URL repo variable is not set"
+            exit 1
+          fi
+          echo "API: $API_URL"
+          echo "Zip: $ZIP_CODE"
+
+      - name: Fetch plans from PTC API
+        id: fetch
+        run: |
+          echo "Fetching plans for zip code $ZIP_CODE..."
+          RESPONSE=$(curl -sf --max-time 120 \
+            "$API_URL/api/plans?zip_code=$ZIP_CODE&estimated_use=1000")
+
+          if [ $? -ne 0 ]; then
+            echo "::error::Failed to fetch plans from API"
+            exit 1
+          fi
+
+          # Extract plans with EFL URLs
+          PLANS=$(echo "$RESPONSE" | jq -c '[
+            .data[]
+            | select(.fact_sheet != null and .fact_sheet != "")
+            | {plan_id: (.id_key // .plan_id // .id | tostring), efl_url: .fact_sheet}
+          ]')
+
+          TOTAL=$(echo "$PLANS" | jq 'length')
+          echo "Found $TOTAL plans with EFL URLs"
+
+          # Apply max_plans limit
+          if [ "$MAX_PLANS" -gt 0 ] 2>/dev/null; then
+            PLANS=$(echo "$PLANS" | jq -c ".[:$MAX_PLANS]")
+            TOTAL=$(echo "$PLANS" | jq 'length')
+            echo "Limited to $TOTAL plans"
+          fi
+
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "::warning::No plans with EFL URLs found"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "$PLANS" > /tmp/plans.json
+          echo "plan_count=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Submit batch for processing
+        if: steps.fetch.outputs.skip != 'true'
+        id: batch
+        run: |
+          PLANS=$(cat /tmp/plans.json)
+          PAYLOAD=$(echo "$PLANS" | jq -c '{plans: .}')
+
+          echo "Submitting $(echo "$PLANS" | jq 'length') plans for EFL processing..."
+
+          RESPONSE=$(curl -sf --max-time 60 \
+            -X POST "$API_URL/api/efl/process/batch" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD")
+
+          if [ $? -ne 0 ]; then
+            echo "::error::Batch submission failed"
+            exit 1
+          fi
+
+          TOTAL=$(echo "$RESPONSE" | jq '.total')
+          echo "Submitted $TOTAL jobs"
+
+          # Save job IDs for polling
+          echo "$RESPONSE" | jq -c '[.jobs[].job_id]' > /tmp/job_ids.json
+
+      - name: Poll for completion
+        if: steps.fetch.outputs.skip != 'true'
+        run: |
+          JOB_IDS=$(cat /tmp/job_ids.json)
+          TOTAL=$(echo "$JOB_IDS" | jq 'length')
+          TIMEOUT=1800  # 30 minutes
+          POLL_INTERVAL=30
+          ELAPSED=0
+
+          COMPLETED=0
+          FAILED=0
+          PENDING=$TOTAL
+
+          echo "Polling $TOTAL jobs (timeout: ${TIMEOUT}s)..."
+
+          while [ $ELAPSED -lt $TIMEOUT ] && [ $PENDING -gt 0 ]; do
+            sleep $POLL_INTERVAL
+            ELAPSED=$((ELAPSED + POLL_INTERVAL))
+
+            COMPLETED=0
+            FAILED=0
+            STILL_RUNNING=0
+
+            for JOB_ID in $(echo "$JOB_IDS" | jq -r '.[]'); do
+              STATUS=$(curl -sf --max-time 30 \
+                "$API_URL/api/efl/status/$JOB_ID" 2>/dev/null \
+                | jq -r '.status // "unknown"')
+
+              case "$STATUS" in
+                completed) COMPLETED=$((COMPLETED + 1)) ;;
+                failed)    FAILED=$((FAILED + 1)) ;;
+                *)         STILL_RUNNING=$((STILL_RUNNING + 1)) ;;
+              esac
+            done
+
+            PENDING=$STILL_RUNNING
+            echo "[${ELAPSED}s] Completed: $COMPLETED | Failed: $FAILED | Running: $PENDING"
+          done
+
+          # Final summary
+          echo ""
+          echo "===== EFL SYNC SUMMARY ====="
+          echo "Total:     $TOTAL"
+          echo "Completed: $COMPLETED"
+          echo "Failed:    $FAILED"
+          echo "Timed out: $PENDING"
+          echo "============================"
+
+          if [ $FAILED -gt 0 ]; then
+            echo "::warning::$FAILED jobs failed during processing"
+          fi
+          if [ $PENDING -gt 0 ]; then
+            echo "::warning::$PENDING jobs still running after ${TIMEOUT}s timeout"
+          fi
+
+          # Fail the workflow if more than half the jobs failed
+          HALF=$((TOTAL / 2))
+          if [ $FAILED -gt $HALF ]; then
+            echo "::error::More than half of jobs failed ($FAILED/$TOTAL)"
+            exit 1
+          fi
