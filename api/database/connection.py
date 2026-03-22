@@ -1,38 +1,104 @@
+import asyncio
 import uuid
 from pathlib import Path
 
-import aiosqlite
+import libsql_experimental as libsql
 
 from config import settings
 
 _SCHEMA_PATH = Path(__file__).parent / "schema.sql"
 
 
-async def init_db():
+def _get_connection():
+    """Create a libsql connection — Turso if configured, local SQLite otherwise."""
     Path(settings.DATABASE_PATH).parent.mkdir(parents=True, exist_ok=True)
-    async with aiosqlite.connect(settings.DATABASE_PATH) as db:
-        await db.execute("PRAGMA journal_mode=WAL")
+    if settings.TURSO_DATABASE_URL:
+        conn = libsql.connect(
+            settings.DATABASE_PATH,
+            sync_url=settings.TURSO_DATABASE_URL,
+            auth_token=settings.TURSO_AUTH_TOKEN,
+        )
+        conn.sync()
+        return conn
+    return libsql.connect(settings.DATABASE_PATH)
+
+
+def _dict_row(cursor) -> dict | None:
+    """Fetch one row as dict (replaces aiosqlite.Row)."""
+    row = cursor.fetchone()
+    if row is None:
+        return None
+    cols = [d[0] for d in cursor.description]
+    return dict(zip(cols, row))
+
+
+def _dict_rows(cursor) -> list[dict]:
+    """Fetch all rows as dicts."""
+    rows = cursor.fetchall()
+    if not rows:
+        return []
+    cols = [d[0] for d in cursor.description]
+    return [dict(zip(cols, row)) for row in rows]
+
+
+def _commit_and_sync(conn):
+    """Commit and sync to Turso if configured."""
+    conn.commit()
+    if settings.TURSO_DATABASE_URL:
+        conn.sync()
+
+
+def _init_db_sync():
+    conn = _get_connection()
+    try:
+        conn.execute("PRAGMA journal_mode=WAL")
         schema_sql = _SCHEMA_PATH.read_text()
-        await db.executescript(schema_sql)
-        await db.commit()
+        conn.executescript(schema_sql)
+        _commit_and_sync(conn)
+    finally:
+        conn.close()
 
 
-async def get_db() -> aiosqlite.Connection:
-    db = await aiosqlite.connect(settings.DATABASE_PATH)
-    db.row_factory = aiosqlite.Row
-    return db
+async def init_db():
+    await asyncio.to_thread(_init_db_sync)
 
 
-async def create_job(plan_id: str, efl_url: str) -> str:
+def _create_job_sync(plan_id: str, efl_url: str) -> str:
     job_id = str(uuid.uuid4())
-    async with aiosqlite.connect(settings.DATABASE_PATH) as db:
-        db.row_factory = aiosqlite.Row
-        await db.execute(
+    conn = _get_connection()
+    try:
+        conn.execute(
             "INSERT INTO jobs (id, plan_id, efl_url, status) VALUES (?, ?, ?, ?)",
             (job_id, plan_id, efl_url, "queued"),
         )
-        await db.commit()
+        _commit_and_sync(conn)
+    finally:
+        conn.close()
     return job_id
+
+
+async def create_job(plan_id: str, efl_url: str) -> str:
+    return await asyncio.to_thread(_create_job_sync, plan_id, efl_url)
+
+
+def _update_job_status_sync(
+    job_id: str,
+    status: str,
+    error: str | None = None,
+    pdf_type: str | None = None,
+):
+    conn = _get_connection()
+    try:
+        conn.execute(
+            """UPDATE jobs
+               SET status = ?, error = COALESCE(?, error), pdf_type = COALESCE(?, pdf_type),
+                   updated_at = datetime('now')
+               WHERE id = ?""",
+            (status, error, pdf_type, job_id),
+        )
+        _commit_and_sync(conn)
+    finally:
+        conn.close()
 
 
 async def update_job_status(
@@ -41,39 +107,33 @@ async def update_job_status(
     error: str | None = None,
     pdf_type: str | None = None,
 ):
-    async with aiosqlite.connect(settings.DATABASE_PATH) as db:
-        await db.execute(
-            """UPDATE jobs
-               SET status = ?, error = COALESCE(?, error), pdf_type = COALESCE(?, pdf_type),
-                   updated_at = datetime('now')
-               WHERE id = ?""",
-            (status, error, pdf_type, job_id),
-        )
-        await db.commit()
+    await asyncio.to_thread(_update_job_status_sync, job_id, status, error, pdf_type)
 
 
-async def update_job_extracted_data(job_id: str, extracted_data: str):
-    """Store extracted EFL data JSON in the job record."""
-    async with aiosqlite.connect(settings.DATABASE_PATH) as db:
-        await db.execute(
+def _update_job_extracted_data_sync(job_id: str, extracted_data: str):
+    conn = _get_connection()
+    try:
+        conn.execute(
             """UPDATE jobs
                SET extracted_data = ?, status = 'completed',
                    updated_at = datetime('now')
                WHERE id = ?""",
             (extracted_data, job_id),
         )
-        await db.commit()
+        _commit_and_sync(conn)
+    finally:
+        conn.close()
 
 
-async def store_efl_data(efl_data, efl_url: str, plan_id: str) -> int:
-    """Store normalized EFL data in plans, pricing_tiers, and charges tables.
+async def update_job_extracted_data(job_id: str, extracted_data: str):
+    await asyncio.to_thread(_update_job_extracted_data_sync, job_id, extracted_data)
 
-    Uses INSERT OR REPLACE to handle re-processing (DB-02).
-    Returns the plan row ID.
-    """
-    async with aiosqlite.connect(settings.DATABASE_PATH) as db:
-        # Upsert plan record
-        await db.execute(
+
+def _store_efl_data_sync(efl_data, efl_url: str, plan_id: str) -> int:
+    """Store normalized EFL data in plans, pricing_tiers, and charges tables."""
+    conn = _get_connection()
+    try:
+        conn.execute(
             """INSERT INTO plans (
                    plan_id, provider_name, plan_name, plan_type,
                    contract_term_months, early_termination_fee, etf_conditions,
@@ -102,20 +162,18 @@ async def store_efl_data(efl_data, efl_url: str, plan_id: str) -> int:
             ),
         )
         # Query the actual row ID — lastrowid returns 0 on ON CONFLICT UPDATE
-        cursor = await db.execute(
+        cursor = conn.execute(
             "SELECT id FROM plans WHERE plan_id = ? AND provider_name = ? AND plan_name = ?",
             (plan_id, efl_data.provider_name, efl_data.plan_name),
         )
-        row = await cursor.fetchone()
+        row = cursor.fetchone()
         plan_rowid = row[0]
 
         # Clear old pricing tiers and charges for this plan (re-processing)
-        await db.execute(
-            "DELETE FROM pricing_tiers WHERE plan_rowid = ?", (plan_rowid,)
-        )
-        await db.execute("DELETE FROM charges WHERE plan_rowid = ?", (plan_rowid,))
+        conn.execute("DELETE FROM pricing_tiers WHERE plan_rowid = ?", (plan_rowid,))
+        conn.execute("DELETE FROM charges WHERE plan_rowid = ?", (plan_rowid,))
 
-        # Insert pricing tiers (DB-01)
+        # Insert pricing tiers
         tiers = [
             (500, efl_data.price_kwh_500),
             (1000, efl_data.price_kwh_1000),
@@ -123,12 +181,12 @@ async def store_efl_data(efl_data, efl_url: str, plan_id: str) -> int:
         ]
         for usage_kwh, price in tiers:
             if price is not None:
-                await db.execute(
+                conn.execute(
                     "INSERT INTO pricing_tiers (plan_rowid, usage_kwh, price_per_kwh) VALUES (?, ?, ?)",
                     (plan_rowid, usage_kwh, price),
                 )
 
-        # Insert categorized charges (DB-04)
+        # Insert categorized charges
         charge_entries = [
             ("base", "monthly", efl_data.base_charge_monthly, None),
             ("tdu_delivery", "per_kwh", efl_data.tdu_delivery_charge_per_kwh, None),
@@ -142,49 +200,62 @@ async def store_efl_data(efl_data, efl_url: str, plan_id: str) -> int:
         ]
         for charge_type, unit, amount, threshold in charge_entries:
             if amount is not None:
-                await db.execute(
+                conn.execute(
                     "INSERT INTO charges (plan_rowid, charge_type, amount, unit, threshold_kwh) VALUES (?, ?, ?, ?, ?)",
                     (plan_rowid, charge_type, amount, unit, threshold),
                 )
 
-        await db.commit()
+        _commit_and_sync(conn)
         return plan_rowid
+    finally:
+        conn.close()
 
 
-async def get_plan_data(plan_id: str) -> dict | None:
+async def store_efl_data(efl_data, efl_url: str, plan_id: str) -> int:
+    return await asyncio.to_thread(_store_efl_data_sync, efl_data, efl_url, plan_id)
+
+
+def _get_plan_data_sync(plan_id: str) -> dict | None:
     """Retrieve full plan data with pricing tiers and charges."""
-    async with aiosqlite.connect(settings.DATABASE_PATH) as db:
-        db.row_factory = aiosqlite.Row
-
-        cursor = await db.execute(
+    conn = _get_connection()
+    try:
+        cursor = conn.execute(
             "SELECT * FROM plans WHERE plan_id = ? ORDER BY extracted_at DESC LIMIT 1",
             (plan_id,),
         )
-        plan = await cursor.fetchone()
-        if plan is None:
+        plan_dict = _dict_row(cursor)
+        if plan_dict is None:
             return None
-        plan_dict = dict(plan)
 
-        cursor = await db.execute(
+        cursor = conn.execute(
             "SELECT usage_kwh, price_per_kwh FROM pricing_tiers WHERE plan_rowid = ? ORDER BY usage_kwh",
             (plan_dict["id"],),
         )
-        plan_dict["pricing_tiers"] = [dict(r) for r in await cursor.fetchall()]
+        plan_dict["pricing_tiers"] = _dict_rows(cursor)
 
-        cursor = await db.execute(
+        cursor = conn.execute(
             "SELECT charge_type, amount, unit, threshold_kwh FROM charges WHERE plan_rowid = ?",
             (plan_dict["id"],),
         )
-        plan_dict["charges"] = [dict(r) for r in await cursor.fetchall()]
+        plan_dict["charges"] = _dict_rows(cursor)
 
         return plan_dict
+    finally:
+        conn.close()
+
+
+async def get_plan_data(plan_id: str) -> dict | None:
+    return await asyncio.to_thread(_get_plan_data_sync, plan_id)
+
+
+def _get_job_sync(job_id: str) -> dict | None:
+    conn = _get_connection()
+    try:
+        cursor = conn.execute("SELECT * FROM jobs WHERE id = ?", (job_id,))
+        return _dict_row(cursor)
+    finally:
+        conn.close()
 
 
 async def get_job(job_id: str) -> dict | None:
-    async with aiosqlite.connect(settings.DATABASE_PATH) as db:
-        db.row_factory = aiosqlite.Row
-        cursor = await db.execute("SELECT * FROM jobs WHERE id = ?", (job_id,))
-        row = await cursor.fetchone()
-        if row is None:
-            return None
-        return dict(row)
+    return await asyncio.to_thread(_get_job_sync, job_id)

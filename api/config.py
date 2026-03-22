@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     PDF_DOWNLOAD_MAX_RETRIES: int = 3
     SCANNED_PDF_TEXT_THRESHOLD: int = 50
     PTC_API_URL: str = "https://www.powertochoose.org/en-us/service/v1/"
+    TURSO_DATABASE_URL: str = ""
+    TURSO_AUTH_TOKEN: str = ""
     OPENROUTER_API_KEY: str = ""
     LLM_MODEL: str = "openrouter/nvidia/nemotron-3-super-120b-a12b:free"
     LLM_TIMEOUT: int = 120
