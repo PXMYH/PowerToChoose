@@ -38,7 +38,7 @@ function matchesRenewableRange(desc: string, range: string): boolean {
   }
 }
 
-function App() {
+export default function PlanBrowser() {
   const [plans, setPlans] = useState<Plan[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -65,7 +65,6 @@ function App() {
     loadPlans()
   }, [loadPlans])
 
-  // Unique sorted company names from current data
   const companies = useMemo(
     () => [...new Set(plans.map((p) => p.company_name))].sort(),
     [plans]
@@ -103,7 +102,7 @@ function App() {
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold tracking-tight">Power to Choose</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Plan Browser</h1>
           <p className="text-sm text-muted-foreground">
             Compare Texas electricity plans
           </p>
@@ -130,5 +129,3 @@ function App() {
     </div>
   )
 }
-
-export default App

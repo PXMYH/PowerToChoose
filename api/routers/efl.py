@@ -1,7 +1,7 @@
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
 from pydantic import BaseModel
 
-from database.connection import create_job, get_job, get_plan_data
+from database.connection import create_job, get_all_plans, get_job, get_plan_data
 from services.validator import cross_validate_with_ptc, validate_plan
 from tasks.process_efl import process_efl_task
 
@@ -15,6 +15,13 @@ class ProcessEFLRequest(BaseModel):
 
 class BatchProcessRequest(BaseModel):
     plans: list[ProcessEFLRequest]
+
+
+@router.get("/plans")
+async def list_efl_plans():
+    """List all extracted EFL plans with pricing tiers and charges."""
+    plans = await get_all_plans()
+    return {"plans": plans, "total": len(plans)}
 
 
 @router.post("/process", status_code=202)

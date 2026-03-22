@@ -248,6 +248,32 @@ async def get_plan_data(plan_id: str) -> dict | None:
     return await asyncio.to_thread(_get_plan_data_sync, plan_id)
 
 
+def _get_all_plans_sync() -> list[dict]:
+    """Retrieve all extracted plans with their pricing tiers and charges."""
+    conn = _get_connection()
+    try:
+        cursor = conn.execute("SELECT * FROM plans ORDER BY extracted_at DESC")
+        plans = _dict_rows(cursor)
+        for plan in plans:
+            cursor = conn.execute(
+                "SELECT usage_kwh, price_per_kwh FROM pricing_tiers WHERE plan_rowid = ? ORDER BY usage_kwh",
+                (plan["id"],),
+            )
+            plan["pricing_tiers"] = _dict_rows(cursor)
+            cursor = conn.execute(
+                "SELECT charge_type, amount, unit, threshold_kwh FROM charges WHERE plan_rowid = ?",
+                (plan["id"],),
+            )
+            plan["charges"] = _dict_rows(cursor)
+        return plans
+    finally:
+        conn.close()
+
+
+async def get_all_plans() -> list[dict]:
+    return await asyncio.to_thread(_get_all_plans_sync)
+
+
 def _get_job_sync(job_id: str) -> dict | None:
     conn = _get_connection()
     try:
