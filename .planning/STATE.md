@@ -54,7 +54,7 @@ None. Project complete.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260322-1vo | Build GitHub Actions daily EFL sync workflow | 2026-03-22 | f62b0c7 | [260322-1vo-build-github-actions-daily-efl-sync-work](./quick/260322-1vo-build-github-actions-daily-efl-sync-work/) |
-| 260322-2gp | Migrate from aiosqlite to Turso (libSQL) | 2026-03-22 | pending | [260322-2gp-migrate-from-aiosqlite-to-turso-libsql](./quick/260322-2gp-migrate-from-aiosqlite-to-turso-libsql/) |
+| 260322-2gp | Migrate from aiosqlite to Turso (libSQL) | 2026-03-22 | 0a7ff36 | [260322-2gp-migrate-from-aiosqlite-to-turso-libsql](./quick/260322-2gp-migrate-from-aiosqlite-to-turso-libsql/) |
 
 ## Session Continuity
 
