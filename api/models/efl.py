@@ -1,6 +1,7 @@
 from enum import Enum
+from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PDFType(str, Enum):
@@ -28,3 +29,22 @@ class TextExtractionResult(BaseModel):
     page_count: int
     file_path: str
     pdf_type: PDFType
+
+
+class EFLData(BaseModel):
+    provider_name: str
+    plan_name: str
+    plan_type: Literal["fixed", "variable"]
+    contract_term_months: int | None = Field(default=None, ge=0)
+    early_termination_fee: float | None = Field(default=None, ge=0)
+    etf_conditions: str | None = None
+    renewable_energy_pct: float | None = Field(default=None, ge=0, le=100)
+    price_kwh_500: float | None = Field(default=None, ge=0)
+    price_kwh_1000: float | None = Field(default=None, ge=0)
+    price_kwh_2000: float | None = Field(default=None, ge=0)
+    base_charge_monthly: float | None = Field(default=None, ge=0)
+    tdu_delivery_charge_per_kwh: float | None = Field(default=None, ge=0)
+    tdu_fixed_charge_monthly: float | None = Field(default=None, ge=0)
+    minimum_usage_charge: float | None = Field(default=None, ge=0)
+    minimum_usage_threshold_kwh: int | None = Field(default=None, ge=0)
+    special_terms: str | None = None

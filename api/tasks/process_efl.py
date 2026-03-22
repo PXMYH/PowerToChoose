@@ -1,9 +1,10 @@
 import asyncio
 import logging
 
-from database.connection import update_job_status
+from database.connection import update_job_extracted_data, update_job_status
 from models.efl import PDFType
 from services.downloader import download_pdf
+from services.efl_extractor import ExtractionError, extract_efl_data
 from services.pdf_processor import extract_text
 
 logger = logging.getLogger(__name__)
@@ -33,16 +34,19 @@ async def process_efl_task(job_id: str, efl_url: str):
             )
             return
 
-        # Stage 3: Parse with LLM (stub for Phase 2)
+        # Stage 3: Parse with LLM
         await update_job_status(job_id, "parsing")
-        # TODO: Phase 2 will add LLM parsing here
+        try:
+            efl_data = await extract_efl_data(extraction.text)
+        except ExtractionError as e:
+            await update_job_status(
+                job_id, "failed", error=f"LLM extraction failed: {e}"
+            )
+            return
 
-        # Stage 4: Store results (stub for Phase 3)
+        # Stage 4: Store results
         await update_job_status(job_id, "storing")
-        # TODO: Phase 3 will add database storage here
-
-        # Complete
-        await update_job_status(job_id, "completed")
+        await update_job_extracted_data(job_id, efl_data.model_dump_json())
 
     except Exception as e:
         logger.exception("EFL processing failed for job %s", job_id)

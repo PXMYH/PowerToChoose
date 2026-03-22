@@ -102,6 +102,12 @@ async def test_process_efl_task_success(tmp_path, monkeypatch):
         pdf_type=PDFType.text_based,
     )
 
+    from models.efl import EFLData
+
+    mock_efl_data = EFLData(
+        provider_name="Test", plan_name="Test Plan", plan_type="fixed"
+    )
+
     with (
         patch(
             "tasks.process_efl.download_pdf",
@@ -111,6 +117,11 @@ async def test_process_efl_task_success(tmp_path, monkeypatch):
         patch(
             "tasks.process_efl.extract_text",
             return_value=mock_extraction,
+        ),
+        patch(
+            "tasks.process_efl.extract_efl_data",
+            new_callable=AsyncMock,
+            return_value=mock_efl_data,
         ),
     ):
         from tasks.process_efl import process_efl_task

@@ -52,6 +52,19 @@ async def update_job_status(
         await db.commit()
 
 
+async def update_job_extracted_data(job_id: str, extracted_data: str):
+    """Store extracted EFL data JSON in the job record."""
+    async with aiosqlite.connect(settings.DATABASE_PATH) as db:
+        await db.execute(
+            """UPDATE jobs
+               SET extracted_data = ?, status = 'completed',
+                   updated_at = datetime('now')
+               WHERE id = ?""",
+            (extracted_data, job_id),
+        )
+        await db.commit()
+
+
 async def get_job(job_id: str) -> dict | None:
     async with aiosqlite.connect(settings.DATABASE_PATH) as db:
         db.row_factory = aiosqlite.Row

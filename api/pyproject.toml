@@ -12,6 +12,8 @@ dependencies = [
     "aiosqlite>=0.21.0",
     "tenacity>=9.0.0",
     "pydantic-settings>=2.13.1",
+    "litellm>=1.82.5",
+    "instructor>=1.14.5",
 ]
 
 [project.optional-dependencies]
