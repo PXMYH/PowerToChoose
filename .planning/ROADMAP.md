@@ -54,7 +54,12 @@ Plans:
 4. Extracted data passes Pydantic schema validation before any downstream processing
 5. Minimum usage charges and penalties are captured when present in EFL
 
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — EFLData Pydantic model, LiteLLM + instructor deps, OpenRouter config, LLM client
+- [ ] 02-02-PLAN.md — Extraction prompt, EFL extractor service with retry logic
+- [ ] 02-03-PLAN.md — Pipeline integration, extracted_data storage, end-to-end tests
 
 ---
 
@@ -101,7 +106,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. PDF Processing Infrastructure | 0/4 | Executing | - |
-| 2. LLM Integration + Data Extraction | 0/0 | Not started | - |
+| 2. LLM Integration + Data Extraction | 0/3 | Planned | - |
 | 3. Database Schema + Storage | 0/0 | Not started | - |
 | 4. API Integration + Validation | 0/0 | Not started | - |
 
