@@ -126,7 +126,7 @@ async def test_process_efl_task_success(tmp_path, monkeypatch):
     ):
         from tasks.process_efl import process_efl_task
 
-        await process_efl_task(job_id, "https://example.com/efl.pdf")
+        await process_efl_task(job_id, "plan-99", "https://example.com/efl.pdf")
 
     job = await get_job(job_id)
     assert job["status"] == "completed"
@@ -156,7 +156,7 @@ async def test_process_efl_task_download_failure(tmp_path, monkeypatch):
     ):
         from tasks.process_efl import process_efl_task
 
-        await process_efl_task(job_id, "https://example.com/bad.pdf")
+        await process_efl_task(job_id, "plan-fail", "https://example.com/bad.pdf")
 
     job = await get_job(job_id)
     assert job["status"] == "failed"

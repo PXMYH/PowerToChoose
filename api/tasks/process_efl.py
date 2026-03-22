@@ -1,7 +1,11 @@
 import asyncio
 import logging
 
-from database.connection import update_job_extracted_data, update_job_status
+from database.connection import (
+    store_efl_data,
+    update_job_extracted_data,
+    update_job_status,
+)
 from models.efl import PDFType
 from services.downloader import download_pdf
 from services.efl_extractor import ExtractionError, extract_efl_data
@@ -10,7 +14,7 @@ from services.pdf_processor import extract_text
 logger = logging.getLogger(__name__)
 
 
-async def process_efl_task(job_id: str, efl_url: str):
+async def process_efl_task(job_id: str, plan_id: str, efl_url: str):
     try:
         # Stage 1: Download PDF
         await update_job_status(job_id, "downloading")
@@ -44,8 +48,9 @@ async def process_efl_task(job_id: str, efl_url: str):
             )
             return
 
-        # Stage 4: Store results
+        # Stage 4: Store results (normalized + JSON)
         await update_job_status(job_id, "storing")
+        await store_efl_data(efl_data, efl_url, plan_id)
         await update_job_extracted_data(job_id, efl_data.model_dump_json())
 
     except Exception as e:

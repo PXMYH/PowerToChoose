@@ -61,7 +61,7 @@ async def test_pipeline_success(tmp_path, monkeypatch):
     ):
         from tasks.process_efl import process_efl_task
 
-        await process_efl_task(job_id, "https://example.com/efl.pdf")
+        await process_efl_task(job_id, "plan-1", "https://example.com/efl.pdf")
 
     job = await get_job(job_id)
     assert job["status"] == "completed"
@@ -97,7 +97,7 @@ async def test_pipeline_extraction_error(tmp_path, monkeypatch):
     ):
         from tasks.process_efl import process_efl_task
 
-        await process_efl_task(job_id, "https://example.com/efl.pdf")
+        await process_efl_task(job_id, "plan-2", "https://example.com/efl.pdf")
 
     job = await get_job(job_id)
     assert job["status"] == "failed"
@@ -131,7 +131,7 @@ async def test_pipeline_scanned_pdf(tmp_path, monkeypatch):
     ):
         from tasks.process_efl import process_efl_task
 
-        await process_efl_task(job_id, "https://example.com/efl.pdf")
+        await process_efl_task(job_id, "plan-3", "https://example.com/efl.pdf")
 
     job = await get_job(job_id)
     assert job["status"] == "failed"
