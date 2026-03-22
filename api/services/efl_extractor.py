@@ -45,7 +45,7 @@ class ExtractionError(Exception):
 )
 def _call_llm(efl_text: str) -> EFLData:
     client = get_llm_client()
-    return client(
+    return client.chat.completions.create(
         model=settings.LLM_MODEL,
         response_model=EFLData,
         messages=[

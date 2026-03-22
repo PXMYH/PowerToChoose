@@ -24,7 +24,8 @@ SAMPLE_EFL_DATA = EFLData(
 
 @pytest.mark.asyncio
 async def test_extract_success():
-    mock_client = MagicMock(return_value=SAMPLE_EFL_DATA)
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = SAMPLE_EFL_DATA
 
     with patch("services.efl_extractor.get_llm_client", return_value=mock_client):
         result = await extract_efl_data("Sample EFL text content here")
@@ -33,12 +34,13 @@ async def test_extract_success():
     assert result.provider_name == "Test Energy"
     assert result.plan_type == "fixed"
     assert result.price_kwh_1000 == 0.119
-    mock_client.assert_called_once()
+    mock_client.chat.completions.create.assert_called_once()
 
 
 @pytest.mark.asyncio
 async def test_extract_failure_raises_extraction_error():
-    mock_client = MagicMock(side_effect=ValueError("LLM parse error"))
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.side_effect = ValueError("LLM parse error")
 
     with (
         patch("services.efl_extractor.get_llm_client", return_value=mock_client),
@@ -64,7 +66,8 @@ async def test_extract_retry_on_rate_limit():
             )
         return SAMPLE_EFL_DATA
 
-    mock_client = MagicMock(side_effect=side_effect)
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.side_effect = side_effect
 
     with patch("services.efl_extractor.get_llm_client", return_value=mock_client):
         result = await extract_efl_data("EFL text that triggers rate limits")
