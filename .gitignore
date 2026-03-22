@@ -15,6 +15,9 @@ dist/
 # OS
 .DS_Store
 
+# Data
+api/data/
+
 # Env
 .env
 .env.local
