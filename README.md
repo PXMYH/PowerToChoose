@@ -7,7 +7,10 @@ React + Vite frontend with a FastAPI backend that includes an EFL (Electricity F
 ## Features
 
 - **Plan Browser** — Search and filter Texas electricity plans by zip code, usage, and plan type
+- **EFL Results** — View extracted plan data with pricing tiers, charges, validation issues, and confidence scores
+- **Collapsible Sidebar** — Navigate between Plan Browser and EFL Results pages
 - **EFL Parser** — Download, extract, and store structured pricing data from provider EFL PDFs using LLM-powered parsing
+- **Daily Sync** — GitHub Actions cron job processes all plans with EFL URLs daily at 6am UTC
 - **Validation** — Sanity checks, confidence scoring, and cross-validation against Power to Choose API data
 
 ## Architecture
@@ -47,6 +50,7 @@ api/
 ### EFL Processing
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| GET | `/api/efl/plans` | List all extracted plans with pricing tiers and charges |
 | POST | `/api/efl/process` | Process a single EFL (`plan_id` + `efl_url`) |
 | POST | `/api/efl/process/batch` | Process multiple EFLs in one request |
 | GET | `/api/efl/status/{job_id}` | Check processing job status |
@@ -79,7 +83,9 @@ Runs at `http://localhost:8000`.
 | `OPENROUTER_API_KEY` | Yes (for EFL parsing) | — | API key from [openrouter.ai](https://openrouter.ai) |
 | `DATABASE_PATH` | No | `data/power2choose.db` | SQLite database file path |
 | `CACHE_DIR` | No | `data/cache` | PDF download cache directory |
-| `LLM_MODEL` | No | `openrouter/nvidia/nemotron-3-super-120b-a12b:free` | LLM model for extraction |
+| `LLM_MODEL` | No | `openrouter/stepfun/step-3.5-flash:free` | LLM model for extraction |
+| `TURSO_DATABASE_URL` | No | — | Turso database URL for cloud persistence |
+| `TURSO_AUTH_TOKEN` | No | — | Turso auth token |
 
 #### Running Tests
 
@@ -137,7 +143,8 @@ The site will be live at `https://<username>.github.io/PowerToChoose/`.
 | Backend | FastAPI + uvicorn |
 | PDF Processing | pdfplumber |
 | LLM Integration | LiteLLM + instructor (OpenRouter) |
-| Database | SQLite (aiosqlite) |
+| Database | SQLite / Turso (libsql-experimental) |
+| Routing | react-router-dom (HashRouter) |
 | HTTP Client | httpx |
 | Config | pydantic-settings |
 | Testing | pytest + pytest-asyncio |

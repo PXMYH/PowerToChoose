@@ -9,8 +9,8 @@ A document processing pipeline that downloads Electricity Facts Labels (EFLs) an
 
 ### Constraints
 
-- **LLM Provider**: Must use OpenRouter with nvidia/nemotron model via LiteLLM library
-- **Storage**: SQLite database for simplicity and portability
+- **LLM Provider**: OpenRouter with stepfun/step-3.5-flash:free model via LiteLLM library
+- **Storage**: Turso (libsql-experimental) with local SQLite fallback
 - **Backend**: Python (existing FastAPI backend)
 - **Cost**: Use free-tier model to minimize API costs
 <!-- GSD:project-end -->
@@ -136,7 +136,7 @@ A document processing pipeline that downloads Electricity Facts Labels (EFLs) an
 - **Routers**: Each domain gets its own file in `routers/`. Register in `main.py` via `app.include_router()`.
 - **Models**: Pydantic models in `models/`. Use `Literal` for enums in data models, `str Enum` for internal state.
 - **Services**: Business logic in `services/`. Keep thin — one concern per file.
-- **DB access**: All queries in `database/connection.py`. Use `aiosqlite.connect(settings.DATABASE_PATH)` per operation (no connection pooling needed for SQLite).
+- **DB access**: All queries in `database/connection.py`. Uses a shared `libsql_experimental` connection protected by `threading.Lock`. Turso sync on commit when `TURSO_DATABASE_URL` is set; local SQLite fallback otherwise.
 - **Upsert pattern**: After `ON CONFLICT DO UPDATE`, always query the row ID explicitly — `cursor.lastrowid` returns 0 on updates.
 - **Async wrappers**: Sync libraries (pdfplumber, instructor) are wrapped with `asyncio.to_thread()`.
 - **Retry**: Use `tenacity` with exponential backoff for external calls (HTTP downloads, LLM API).
@@ -166,7 +166,7 @@ POST /api/efl/process → create_job → BackgroundTask(process_efl_task)
 | `main.py` | FastAPI app, lifespan (init_db + cache dir), CORS, router registration |
 | `config.py` | `Settings` class with env vars (DATABASE_PATH, OPENROUTER_API_KEY, LLM_MODEL) |
 | `routers/plans.py` | PTC API proxy |
-| `routers/efl.py` | EFL process/batch/status/results/validate/cross-validate endpoints |
+| `routers/efl.py` | EFL plans list/process/batch/status/results/validate/cross-validate endpoints |
 | `services/downloader.py` | PDF download with retry + content-addressable cache |
 | `services/pdf_processor.py` | pdfplumber text extraction + scanned PDF detection |
 | `services/llm_client.py` | `instructor.from_litellm(litellm.completion)` factory |
