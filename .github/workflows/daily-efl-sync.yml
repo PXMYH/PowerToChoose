@@ -35,10 +35,8 @@ jobs:
         id: fetch
         run: |
           echo "Fetching plans for zip code $ZIP_CODE..."
-          RESPONSE=$(curl -sf --max-time 120 \
-            "$API_URL/api/plans?zip_code=$ZIP_CODE&estimated_use=1000")
-
-          if [ $? -ne 0 ]; then
+          if ! RESPONSE=$(curl -s --max-time 120 \
+            "$API_URL/api/plans?zip_code=$ZIP_CODE&estimated_use=1000"); then
             echo "::error::Failed to fetch plans from API"
             exit 1
           fi
@@ -87,20 +85,23 @@ jobs:
             CHUNK_SIZE=$(echo "$CHUNK" | jq 'length')
             PAYLOAD=$(echo "$CHUNK" | jq -c '{plans: .}')
 
-            RESPONSE=$(curl -sf --max-time 120 \
+            if RESPONSE=$(curl -s --max-time 120 \
               -X POST "$API_URL/api/efl/process/batch" \
               -H "Content-Type: application/json" \
-              -d "$PAYLOAD")
+              -d "$PAYLOAD"); then
 
-            if [ $? -ne 0 ]; then
-              echo "::warning::Batch at offset $OFFSET failed, continuing..."
-              continue
+              BATCH_TOTAL=$(echo "$RESPONSE" | jq '.total // 0')
+              if [ "$BATCH_TOTAL" -gt 0 ] 2>/dev/null; then
+                BATCH_JOBS=$(echo "$RESPONSE" | jq -c '[.jobs[].job_id]')
+                ALL_JOB_IDS=$(echo "$ALL_JOB_IDS $BATCH_JOBS" | jq -cs 'add')
+                SUBMITTED=$((SUBMITTED + CHUNK_SIZE))
+                echo "  Submitted batch $OFFSET..$((OFFSET + CHUNK_SIZE))"
+              else
+                echo "::warning::Batch at offset $OFFSET returned unexpected response, skipping"
+              fi
+            else
+              echo "::warning::Batch at offset $OFFSET failed (curl error), continuing..."
             fi
-
-            BATCH_JOBS=$(echo "$RESPONSE" | jq -c '[.jobs[].job_id]')
-            ALL_JOB_IDS=$(echo "$ALL_JOB_IDS $BATCH_JOBS" | jq -cs 'add')
-            SUBMITTED=$((SUBMITTED + CHUNK_SIZE))
-            echo "  Submitted batch $OFFSET..$((OFFSET + CHUNK_SIZE))"
 
             # Brief pause between batches to avoid overwhelming the server
             sleep 2
