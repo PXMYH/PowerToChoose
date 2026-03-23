@@ -1,4 +1,5 @@
 import asyncio
+import threading
 import uuid
 from pathlib import Path
 
@@ -8,19 +9,26 @@ from config import settings
 
 _SCHEMA_PATH = Path(__file__).parent / "schema.sql"
 
+_conn = None
+_lock = threading.Lock()
+
 
 def _get_connection():
-    """Create a libsql connection — Turso if configured, local SQLite otherwise."""
+    """Return a shared libsql connection (thread-safe via _lock)."""
+    global _conn
+    if _conn is not None:
+        return _conn
     Path(settings.DATABASE_PATH).parent.mkdir(parents=True, exist_ok=True)
     if settings.TURSO_DATABASE_URL:
-        conn = libsql.connect(
+        _conn = libsql.connect(
             settings.DATABASE_PATH,
             sync_url=settings.TURSO_DATABASE_URL,
             auth_token=settings.TURSO_AUTH_TOKEN,
         )
-        conn.sync()
-        return conn
-    return libsql.connect(settings.DATABASE_PATH)
+        _conn.sync()
+    else:
+        _conn = libsql.connect(settings.DATABASE_PATH)
+    return _conn
 
 
 def _dict_row(cursor) -> dict | None:
@@ -49,14 +57,12 @@ def _commit_and_sync(conn):
 
 
 def _init_db_sync():
-    conn = _get_connection()
-    try:
+    with _lock:
+        conn = _get_connection()
         conn.execute("PRAGMA journal_mode=WAL")
         schema_sql = _SCHEMA_PATH.read_text()
         conn.executescript(schema_sql)
         _commit_and_sync(conn)
-    finally:
-        conn.close()
 
 
 async def init_db():
@@ -65,15 +71,13 @@ async def init_db():
 
 def _create_job_sync(plan_id: str, efl_url: str) -> str:
     job_id = str(uuid.uuid4())
-    conn = _get_connection()
-    try:
+    with _lock:
+        conn = _get_connection()
         conn.execute(
             "INSERT INTO jobs (id, plan_id, efl_url, status) VALUES (?, ?, ?, ?)",
             (job_id, plan_id, efl_url, "queued"),
         )
         _commit_and_sync(conn)
-    finally:
-        conn.close()
     return job_id
 
 
@@ -87,8 +91,8 @@ def _update_job_status_sync(
     error: str | None = None,
     pdf_type: str | None = None,
 ):
-    conn = _get_connection()
-    try:
+    with _lock:
+        conn = _get_connection()
         conn.execute(
             """UPDATE jobs
                SET status = ?, error = COALESCE(?, error), pdf_type = COALESCE(?, pdf_type),
@@ -97,8 +101,6 @@ def _update_job_status_sync(
             (status, error, pdf_type, job_id),
         )
         _commit_and_sync(conn)
-    finally:
-        conn.close()
 
 
 async def update_job_status(
@@ -111,8 +113,8 @@ async def update_job_status(
 
 
 def _update_job_extracted_data_sync(job_id: str, extracted_data: str):
-    conn = _get_connection()
-    try:
+    with _lock:
+        conn = _get_connection()
         conn.execute(
             """UPDATE jobs
                SET extracted_data = ?, status = 'completed',
@@ -121,8 +123,6 @@ def _update_job_extracted_data_sync(job_id: str, extracted_data: str):
             (extracted_data, job_id),
         )
         _commit_and_sync(conn)
-    finally:
-        conn.close()
 
 
 async def update_job_extracted_data(job_id: str, extracted_data: str):
@@ -131,8 +131,8 @@ async def update_job_extracted_data(job_id: str, extracted_data: str):
 
 def _store_efl_data_sync(efl_data, efl_url: str, plan_id: str) -> int:
     """Store normalized EFL data in plans, pricing_tiers, and charges tables."""
-    conn = _get_connection()
-    try:
+    with _lock:
+        conn = _get_connection()
         conn.execute(
             """INSERT INTO plans (
                    plan_id, provider_name, plan_name, plan_type,
@@ -207,8 +207,6 @@ def _store_efl_data_sync(efl_data, efl_url: str, plan_id: str) -> int:
 
         _commit_and_sync(conn)
         return plan_rowid
-    finally:
-        conn.close()
 
 
 async def store_efl_data(efl_data, efl_url: str, plan_id: str) -> int:
@@ -217,8 +215,8 @@ async def store_efl_data(efl_data, efl_url: str, plan_id: str) -> int:
 
 def _get_plan_data_sync(plan_id: str) -> dict | None:
     """Retrieve full plan data with pricing tiers and charges."""
-    conn = _get_connection()
-    try:
+    with _lock:
+        conn = _get_connection()
         cursor = conn.execute(
             "SELECT * FROM plans WHERE plan_id = ? ORDER BY extracted_at DESC LIMIT 1",
             (plan_id,),
@@ -240,8 +238,6 @@ def _get_plan_data_sync(plan_id: str) -> dict | None:
         plan_dict["charges"] = _dict_rows(cursor)
 
         return plan_dict
-    finally:
-        conn.close()
 
 
 async def get_plan_data(plan_id: str) -> dict | None:
@@ -250,8 +246,8 @@ async def get_plan_data(plan_id: str) -> dict | None:
 
 def _get_all_plans_sync() -> list[dict]:
     """Retrieve all extracted plans with their pricing tiers and charges."""
-    conn = _get_connection()
-    try:
+    with _lock:
+        conn = _get_connection()
         cursor = conn.execute("SELECT * FROM plans ORDER BY extracted_at DESC")
         plans = _dict_rows(cursor)
         for plan in plans:
@@ -266,8 +262,6 @@ def _get_all_plans_sync() -> list[dict]:
             )
             plan["charges"] = _dict_rows(cursor)
         return plans
-    finally:
-        conn.close()
 
 
 async def get_all_plans() -> list[dict]:
@@ -275,12 +269,10 @@ async def get_all_plans() -> list[dict]:
 
 
 def _get_job_sync(job_id: str) -> dict | None:
-    conn = _get_connection()
-    try:
+    with _lock:
+        conn = _get_connection()
         cursor = conn.execute("SELECT * FROM jobs WHERE id = ?", (job_id,))
         return _dict_row(cursor)
-    finally:
-        conn.close()
 
 
 async def get_job(job_id: str) -> dict | None:
