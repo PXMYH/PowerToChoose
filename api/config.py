@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     TURSO_DATABASE_URL: str = ""
     TURSO_AUTH_TOKEN: str = ""
     OPENROUTER_API_KEY: str = ""
-    LLM_MODEL: str = "openrouter/nvidia/nemotron-3-super-120b-a12b:free"
+    LLM_MODEL: str = "openrouter/stepfun/step-3.5-flash:free"
     LLM_TIMEOUT: int = 120
     LLM_MAX_RETRIES: int = 3
 
