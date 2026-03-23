@@ -1,7 +1,23 @@
 from enum import Enum
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, BeforeValidator, Field
+
+
+def _coerce_float(v: object) -> float | None:
+    if v is None or v == "":
+        return None
+    return float(v)
+
+
+def _coerce_int(v: object) -> int | None:
+    if v is None or v == "":
+        return None
+    return int(float(v))
+
+
+CoercedFloat = Annotated[float | None, BeforeValidator(_coerce_float)]
+CoercedInt = Annotated[int | None, BeforeValidator(_coerce_int)]
 
 
 class PDFType(str, Enum):
@@ -35,16 +51,16 @@ class EFLData(BaseModel):
     provider_name: str
     plan_name: str
     plan_type: Literal["fixed", "variable"]
-    contract_term_months: int | None = Field(default=None, ge=0)
-    early_termination_fee: float | None = Field(default=None, ge=0)
+    contract_term_months: CoercedInt = Field(default=None, ge=0)
+    early_termination_fee: CoercedFloat = Field(default=None, ge=0)
     etf_conditions: str | None = None
-    renewable_energy_pct: float | None = Field(default=None, ge=0, le=100)
-    price_kwh_500: float | None = Field(default=None, ge=0)
-    price_kwh_1000: float | None = Field(default=None, ge=0)
-    price_kwh_2000: float | None = Field(default=None, ge=0)
-    base_charge_monthly: float | None = Field(default=None, ge=0)
-    tdu_delivery_charge_per_kwh: float | None = Field(default=None, ge=0)
-    tdu_fixed_charge_monthly: float | None = Field(default=None, ge=0)
-    minimum_usage_charge: float | None = Field(default=None, ge=0)
-    minimum_usage_threshold_kwh: int | None = Field(default=None, ge=0)
+    renewable_energy_pct: CoercedFloat = Field(default=None, ge=0, le=100)
+    price_kwh_500: CoercedFloat = Field(default=None, ge=0)
+    price_kwh_1000: CoercedFloat = Field(default=None, ge=0)
+    price_kwh_2000: CoercedFloat = Field(default=None, ge=0)
+    base_charge_monthly: CoercedFloat = Field(default=None, ge=0)
+    tdu_delivery_charge_per_kwh: CoercedFloat = Field(default=None, ge=0)
+    tdu_fixed_charge_monthly: CoercedFloat = Field(default=None, ge=0)
+    minimum_usage_charge: CoercedFloat = Field(default=None, ge=0)
+    minimum_usage_threshold_kwh: CoercedInt = Field(default=None, ge=0)
     special_terms: str | None = None
