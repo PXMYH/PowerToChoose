@@ -43,11 +43,11 @@ jobs:
             exit 1
           fi
 
-          # Extract plans with EFL URLs
+          # Extract plans with EFL URLs (PTC API returns a flat array)
           PLANS=$(echo "$RESPONSE" | jq -c '[
-            .data[]
+            .[]
             | select(.fact_sheet != null and .fact_sheet != "")
-            | {plan_id: (.id_key // .plan_id // .id | tostring), efl_url: .fact_sheet}
+            | {plan_id: (.plan_id | tostring), efl_url: .fact_sheet}
           ]')
 
           TOTAL=$(echo "$PLANS" | jq 'length')
