@@ -75,40 +75,39 @@ jobs:
           PLANS=$(cat /tmp/plans.json)
           TOTAL=$(echo "$PLANS" | jq 'length')
           BATCH_SIZE=20
-          ALL_JOB_IDS="[]"
           SUBMITTED=0
 
+          echo '[]' > /tmp/job_ids.json
           echo "Submitting $TOTAL plans in batches of $BATCH_SIZE..."
 
           for OFFSET in $(seq 0 $BATCH_SIZE $((TOTAL - 1))); do
             CHUNK=$(echo "$PLANS" | jq -c ".[$OFFSET:$OFFSET+$BATCH_SIZE]")
             CHUNK_SIZE=$(echo "$CHUNK" | jq 'length')
-            PAYLOAD=$(echo "$CHUNK" | jq -c '{plans: .}')
 
-            if RESPONSE=$(curl -s --max-time 120 \
+            RESPONSE=$(curl -s --max-time 120 \
               -X POST "$API_URL/api/efl/process/batch" \
               -H "Content-Type: application/json" \
-              -d "$PAYLOAD"); then
+              -d "$(echo "$CHUNK" | jq -c '{plans: .}')" || true)
 
-              BATCH_TOTAL=$(echo "$RESPONSE" | jq '.total // 0')
-              if [ "$BATCH_TOTAL" -gt 0 ] 2>/dev/null; then
-                BATCH_JOBS=$(echo "$RESPONSE" | jq -c '[.jobs[].job_id]')
-                ALL_JOB_IDS=$(echo "$ALL_JOB_IDS $BATCH_JOBS" | jq -cs 'add')
-                SUBMITTED=$((SUBMITTED + CHUNK_SIZE))
-                echo "  Submitted batch $OFFSET..$((OFFSET + CHUNK_SIZE))"
-              else
-                echo "::warning::Batch at offset $OFFSET returned unexpected response, skipping"
-              fi
+            BATCH_TOTAL=$(echo "$RESPONSE" | jq '.total // 0' 2>/dev/null)
+            if [ "$BATCH_TOTAL" -gt 0 ] 2>/dev/null; then
+              echo "$RESPONSE" | jq -c '[.jobs[].job_id]' >> /tmp/job_ids_raw.txt
+              SUBMITTED=$((SUBMITTED + CHUNK_SIZE))
+              echo "  Submitted batch $OFFSET..$((OFFSET + CHUNK_SIZE))"
             else
-              echo "::warning::Batch at offset $OFFSET failed (curl error), continuing..."
+              echo "::warning::Batch at offset $OFFSET failed or empty, continuing..."
             fi
 
-            # Brief pause between batches to avoid overwhelming the server
             sleep 2
           done
 
-          echo "Submitted $SUBMITTED of $TOTAL plans"
-          echo "$ALL_JOB_IDS" > /tmp/job_ids.json
+          # Merge all job ID arrays into one
+          if [ -f /tmp/job_ids_raw.txt ]; then
+            jq -cs 'add' /tmp/job_ids_raw.txt > /tmp/job_ids.json
+          fi
+
+          TOTAL_JOBS=$(jq 'length' /tmp/job_ids.json)
+          echo "Submitted $SUBMITTED plans ($TOTAL_JOBS jobs)"
 
       - name: Poll for completion
         if: steps.fetch.outputs.skip != 'true'
