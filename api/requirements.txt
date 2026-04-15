@@ -5,5 +5,5 @@ pdfplumber>=0.11.9
 libsql-experimental>=0.0.55
 tenacity>=9.0.0
 pydantic-settings>=2.13.1
-litellm>=1.82.5
+litellm>=1.83.0
 instructor>=1.14.5
