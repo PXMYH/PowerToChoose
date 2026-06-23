@@ -4,6 +4,6 @@ uvicorn>=0.41.0
 pdfplumber>=0.11.9
 libsql-experimental>=0.0.55
 tenacity>=9.0.0
-pydantic-settings>=2.13.1
+pydantic-settings>=2.14.2
 litellm>=1.83.0
 instructor>=1.14.5
